@@ -43,7 +43,6 @@ module.exports = {
   /* Add user api start here................................*/
 
   async addProduct(req, res, next) {
-    console.log(req.body)
     try {
       const {
         name,
@@ -192,52 +191,25 @@ module.exports = {
     try {
       const {
         productId,
-        categoryId,
-        subCategoryId,
-        childCategoryId,
+        category,
+        subCategory,
         name,
-        slug,
-        brand,
-        status,
-        unitSize,
-        desc,
-        buyerPrice,
-        price,
-        qty,
         discount,
-        discountPer,
-        total,
-        netPrice,
+        net,
+        price,
+        image,
+        tags,
+        desc,
+        status
       } = req.body;
-      db.product
-        .findOne({ where: { id: productId } })
+      productsCollection
+        .findOne({ _id: ObjectId(productId) })
         .then((product) => {
           if (product) {
-            return db.product.update(
-              {
-                categoryId: categoryId ? categoryId : product.categoryId,
-                subCategoryId: subCategoryId
-                  ? subCategoryId
-                  : product.subCategoryId,
-                childCategoryId: childCategoryId
-                  ? childCategoryId
-                  : product.childCategoryId,
-                name: name,
-                slug: slug,
-                status: parseInt(status) ? "active" : "inactive",
-                brand: brand,
-                unitSize: unitSize,
-                desc: desc,
-                buyerPrice: buyerPrice,
-                price: price,
-                qty: qty,
-                discount: discount,
-                discountPer: discountPer,
-                total: total,
-                netPrice: netPrice,
-                photo: req.files ? categoryId + "/" + subCategoryId + "/" + childCategoryId + "/" + req.files.photo.name : product.photo,
-              },
-              { where: { id: product.id } }
+            return productsCollection.updateOne(
+              { _id: ObjectId(product._id) },
+              { $set: { category: category, subCategory: subCategory, name: name, discount: discount, net: net, price: price, tags: tags, desc: desc, image: image, status: status } },
+              { upsert: true }
             );
           }
           throw new RequestError("Not Found Product", 409);
@@ -375,7 +347,6 @@ module.exports = {
           }
         })
         .then((list) => {
-          console.log(JSON.stringify(list));
           res.status(200).json({ success: true, data: list });
         });
     } catch (err) {
