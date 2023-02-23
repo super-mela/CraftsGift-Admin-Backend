@@ -1,10 +1,3 @@
-// import express from "express";
-// import productController from "./product.controller";
-// import { sanitize } from "../../../middleware/sanitizer";
-// import { customerStrategy,jwtStrategy, jwtCustomerStrategy,} from "../../../middleware/strategy";
-// import upload from "../../../awsbucket";
-// import upload_file from "../../../photosave";
-
 const express = require("express");
 const productController = require("./product.controller");
 const { sanitize } = require("../../../middleware/sanitizer");
@@ -33,31 +26,9 @@ productRouter.route("/getAllPhoto").get(sanitize(), productController.getAllPhot
 productRouter.route("/getAllPhotobyid").get(sanitize(), productController.getAllPhotobyid);
 productRouter.route("/slider-photo/delete").delete(sanitize(), productController.deleteSliderPhoto);
 productRouter.route("/getSavedProduct").get(sanitize(), jwtCustomerStrategy, productController.getSavedProduct);
-productRouter.route("/getCustomerProduct").get(sanitize(), jwtCustomerStrategy, productController.getCustomerProduct);
-//Category by product
-productRouter.route("/getAllGroceryStaple").get(sanitize(), productController.getAllGrocerryStaples);
-productRouter.route("/getAllVechicle").get(sanitize(), productController.getAllVechicle);
-productRouter.route("/getAllElectronics").get(sanitize(), productController.getAllElectronics);
-productRouter.route("/getAllFashion").get(sanitize(), productController.getAllFashion);
-productRouter.route("/getAllHealthandbeauty").get(sanitize(), productController.getAllHealthandbeauty);
-productRouter.route("/getAllSport").get(sanitize(), productController.getAllSport);
-productRouter.route("/getAllHome").get(sanitize(), productController.getAllHome);
-productRouter.route("/getAllKids").get(sanitize(), productController.getAllKids);
-productRouter.route("/getAllAutoparts").get(sanitize(), productController.getAllAutoparts);
-productRouter.route("/getAllVideogames").get(sanitize(), productController.getAllVideogames);
-productRouter.route("/list/:slug").get(sanitize(), productController.getAllProductBySlug);
-productRouter.route("/getAllByCategory").post(sanitize(), productController.GetAllByCategory);
-productRouter.route("/getallProductbySubChildCat").post(sanitize(), productController.getProductSubChildCat);
-
-// Filter product
-productRouter.route("/gcatalogsearch/result").get(sanitize(), productController.getFilterbyProduct);
-// productRouter.route("/searchfile").post(sanitize(), productController.SearchFile);
 
 //new api
 productRouter.route("/search_product").post(productController.searchProductBySubCat);
 
-//aws image delete
-productRouter.route("/aws/delete/photo").post(sanitize(), productController.awsProductPhotoDelete);
-productRouter.route("/customer/delete/photo").post(sanitize(), productController.customerProductPhotoDelete);
 
 module.exports = { productRouter }

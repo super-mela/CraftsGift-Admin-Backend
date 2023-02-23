@@ -100,26 +100,17 @@ module.exports = {
 
   async updateCategory(req, res, next) {
     try {
-      const { childcategoryId, subcategoryId, sub_name, name } = req.body;
-      db.SubCategory.findOne({ where: { id: subcategoryId } }).then((data) => {
+      const { _id, categoryName, subCategory, image } = req.body;
+      categoriesCollections.findOne({ _id: ObjectId(_id) }).then((data) => {
         if (data) {
-          return db.SubCategory.update(
-            { sub_name: sub_name },
-            { where: { id: subcategoryId } }
+          return categoriesCollections.updateOne(
+            { _id: ObjectId(data._id) },
+            { $set: { categoryName: categoryName, subCategory: subCategory, image: image } },
+            { upsert: true }
           );
         }
         throw new RequestError("Category Not Found", 409);
-      });
-      db.SubChildCategory.findOne({ where: { id: childcategoryId } })
-        .then((data) => {
-          if (data) {
-            return db.SubChildCategory.update(
-              { name: name },
-              { where: { id: childcategoryId } }
-            );
-          }
-          throw new RequestError("Category Not Found", 409);
-        })
+      })
         .then((category) => {
           res.status(200).json({ success: true, msg: "Successfully Updated" });
         })
@@ -189,7 +180,6 @@ module.exports = {
     try {
       categoriesCollections.findOne({ categoryName: req.query.categoryId })
         .then((list) => {
-          console.log(list)
           res.status(200).json({ success: true, data: list });
         })
         .catch(function (err) {
@@ -282,22 +272,19 @@ module.exports = {
 
   async getMainListUpdate(req, res, next) {
     try {
-      const { id, name, slug } = req.body;
-      db.category
-        .findOne({ where: { id: id } })
-        .then((data) => {
-          if (data) {
-            return db.category.update(
-              { name: name, slug: slug },
-              { where: { id: data.id } }
-            );
-          }
-          throw new RequestError("Category is not found");
-        })
+      const { _id, categoryName, subCategories, image } = req.body;
+      categoriesCollections.findOne({ _id: ObjectId(_id) }).then((data) => {
+        if (data) {
+          return categoriesCollections.updateOne(
+            { _id: ObjectId(data._id) },
+            { $set: { categoryName: categoryName, subCategories: subCategories, image: image } },
+            { upsert: true }
+          );
+        }
+        throw new RequestError("Category Not Found", 409);
+      })
         .then((category) => {
-          res
-            .status(200)
-            .json({ success: true, msg: "Successfully Updated category" });
+          res.status(200).json({ success: true, msg: "Successfully Updated" });
         })
         .catch(function (err) {
           next(err);
@@ -373,14 +360,14 @@ module.exports = {
 
   //child category
   async deleteCategory(req, res, next) {
-    db.SubChildCategory.findOne({ where: { id: parseInt(req.query.id) } })
+    categoriesCollections.findOne({ _id: ObjectId(req.query.id) })
       .then((data) => {
         if (data) {
-          return db.SubChildCategory.destroy({ where: { id: data.id } }).then(
+          return categoriesCollections.deleteOne({ _id: ObjectId(data._id) }).then(
             (r) => [r, data]
           );
         }
-        throw new RequestError("child_category is not found");
+        throw new RequestError("category is not found");
       })
       .then((re) => {
         return res
