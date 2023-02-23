@@ -2,7 +2,7 @@ const express = require("express");
 
 const { authRouter } = require("./resources/auth");
 const { productRouter } = require("./resources/product");
-const { vendorRouter } = require("./resources/vendor");
+const { offerRouter } = require("./resources/offer");
 const { categoryRouter } = require("./resources/category");
 const { locationRouter } = require("./resources/location");
 const { customerRouter } = require("./resources/customer");
@@ -20,7 +20,7 @@ restRouter.use('/address', addressRouter);
 restRouter.use('/customer', customerRouter);
 restRouter.use('/location', locationRouter);
 restRouter.use('/product', productRouter);
-restRouter.use('/vendor', vendorRouter);
+restRouter.use('/offer', offerRouter);
 restRouter.use('/category', categoryRouter);
 restRouter.use('/order', orderRouter);
 restRouter.use('/payment', paymentRouter);
