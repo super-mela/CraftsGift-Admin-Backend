@@ -31,7 +31,6 @@ app.use(fileupload());
 
 /* Route handling */
 app.use("/api", restRouter);
-// app.use("/", restRouter);
 // app.use('/', webRouter);
 
 

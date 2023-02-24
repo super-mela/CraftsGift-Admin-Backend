@@ -10,6 +10,7 @@ const { orderRouter } = require("./resources/order");
 const { paymentRouter } = require("./resources/payment");
 const { feedbackRouter } = require("./resources/feedback");
 const { addressRouter } = require("./resources/address");
+const { web } = require('./resources/web');
 
 const restRouter = express.Router();
 
@@ -25,6 +26,7 @@ restRouter.use('/category', categoryRouter);
 restRouter.use('/order', orderRouter);
 restRouter.use('/payment', paymentRouter);
 restRouter.use('/feedback', feedbackRouter);
+restRouter.use('/web', web);
 
 module.exports = {
     restRouter
