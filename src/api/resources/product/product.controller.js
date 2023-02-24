@@ -74,7 +74,7 @@ module.exports = {
               desc: desc,
               purchases: 0,
               price: price,
-              tags: tags,
+              tags: JSON.parse(tags),
               discount: discount,
               date: new Date(),
               image: image
