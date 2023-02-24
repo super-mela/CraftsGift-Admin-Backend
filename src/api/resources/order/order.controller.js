@@ -3,6 +3,7 @@ const { db } = require("../../../models")
 const config = require("../../../config").data;
 
 var Sequelize = require("sequelize");
+const { ObjectId } = require("mongodb");
 
 const dbs = config.db.dbs;
 const invoicesCollection = dbs.collection("invoices");
@@ -101,13 +102,13 @@ module.exports = {
 
     async statusUpdate(req, res, next) {
         try {
-            const { id, status, deliverydate } = req.body;
-            db.Order.findOne({ where: { id: id } })
+            const { _id, status, deliverydate } = req.body;
+            invoicesCollection.findOne({ _id: ObjectId(_id) })
                 .then(list => {
-                    return db.Order.update({
-                        status: status,
-                        deliverydate: deliverydate ? deliverydate : list.deliverydate
-                    }, { where: { id: id } })
+                    return invoicesCollection.updateOne(
+                        { _id: ObjectId(list._id) },
+                        { $set: { status: status, deliverydate: deliverydate } },
+                        { upsert: true })
                 })
                 .then((success) => {
                     res.status(200).json({ 'success': true, msg: "Successfully Updated Status" });
