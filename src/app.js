@@ -36,9 +36,8 @@ module.exports = {
         app.use(bodyParser.json({ limit: '50mb' }));
         app.use(cookieParser(config.app.secret));
         app.use(session({ secret: config.app.secret, resave: true, saveUninitialized: true }));
-        app.use("/profile", express.static(path.join(__dirname, 'photo/customer/profile')));
-        app.use("/product", express.static(path.join(__dirname, 'photo/product/banner')));
-        app.use("/affiliate", express.static(path.join(__dirname, 'photo/affiliate/banner')));
+        app.use("/product", express.static(path.join(__dirname, 'photo/product/')));
+        app.use("/category", express.static(path.join(__dirname, 'photo/category/')));
         app.use("/multiImages", express.static(path.join(__dirname, 'photo/product/MultiImages')));
         app.use(passport.initialize());
         app.use(passport.session());

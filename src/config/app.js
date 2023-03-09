@@ -19,7 +19,7 @@ module.exports = {
      * Stores the port number on which the application will
      * listen to the requests
      */
-    port: process.env.APP_PORT || 4000,
+    port: process.env.APP_PORT || 5000,
 
 
     /**

@@ -77,18 +77,36 @@ module.exports = {
               tags: JSON.parse(tags),
               discount: discount,
               date: new Date(),
-              image: image
+              image: req.files
+                ?
+                category +
+                "/" +
+                subCategory +
+                "/" +
+                req.files.image.name
+                : "no image",
 
             });
           }
           throw new RequestError("Already exist product", 409);
         })
         .then((product) => {
-          res.status(200).json({
-            success: true,
-            msg: "Successfully inserted product",
-            id: product.id
-          });
+          if (req.files) {
+            upload_files(req, function (err, result) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.status(200).json({
+                  success: true,
+                  msg: "Successfully inserted product",
+                });
+              }
+            });
+          } else {
+            res
+              .status(200)
+              .json({ success: true, msg: "Successfully inserted product" });
+          }
         })
         .catch(function (err) {
           next(err);
@@ -191,14 +209,36 @@ module.exports = {
           if (product) {
             return productsCollection.updateOne(
               { _id: ObjectId(product._id) },
-              { $set: { category: category, subCategory: subCategory, name: name, discount: discount, net: net, price: price, tags: tags, desc: desc, image: image, status: status } },
+              {
+                $set: {
+                  category: category, subCategory: subCategory, name: name, discount: discount, net: net, price: price, tags: JSON.parse(tags), desc: desc,
+                  image: req.files ? category + "/" + subCategory + "/" + req.files.image.name : product.image,
+                  status: status
+                }
+              },
               { upsert: true }
             );
           }
           throw new RequestError("Not Found Product", 409);
         })
         .then((p) => {
-          res.status(200).json({ success: true, msg: "Updated Successfully" });
+          if (req.files) {
+            upload_files(req, function (err, result) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.status(200).json({
+                  success: true,
+                  msg: "Successfully inserted product",
+                });
+              }
+            });
+          } else {
+            res
+              .status(200)
+              .json({ success: true, msg: "Successfully inserted product" });
+          }
+          // res.status(200).json({ success: true, msg: "Updated Successfully" });
         })
         .catch(function (err) {
           next(err);

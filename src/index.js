@@ -21,9 +21,11 @@ app.use(
   cors({
     origin: true,
     credentials: true,
+    optionSuccessStatus: 200,
+    methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH']
   })
 );
-app.options("*", cors());
+// app.options("*", cors());
 
 app.use(fileupload());
 

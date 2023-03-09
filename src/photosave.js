@@ -1,27 +1,24 @@
 const fs = require("fs");
 
-var baseurl = process.env.PRODUCT_PATH;
-var affiliateurl = process.env.AFFILLIATE_PATH;
+var baseurl = __dirname + '/photo/product';
+var baseurlcategory = __dirname + '/photo/category';
+
+console.log(baseurl)
 
 var upload_files = function (req, res) {
   if (req.files) {
-    const { categoryId, subCategoryId, childCategoryId } = req.body;
-    const file = req.files.photo;
-    //console.log("request: " + req.files.file.mimetype);
-    const RawfileType = req.files.photo.mimetype;
-    const fileType = RawfileType.split("/")[1];
+    const { category, subCategory } = req.body;
+    const file = req.files.image;
     fs.access(
-      baseurl + "/" + categoryId + "/" + subCategoryId + "/" + childCategoryId,
+      baseurl + "/" + category + "/" + subCategory + "/",
       (error) => {
         if (error) {
           fs.mkdir(
             baseurl +
             "/" +
-            categoryId +
+            category +
             "/" +
-            subCategoryId +
-            "/" +
-            childCategoryId,
+            subCategory,
             { recursive: true },
             function (err) {
               if (err) {
@@ -31,7 +28,7 @@ var upload_files = function (req, res) {
                 }
 
                 file.mv(
-                  `${baseurl}/${categoryId}/${subCategoryId}/${childCategoryId}/${file.nam}`,
+                  `${baseurl}/${category}/${subCategory}/${file.name}`,
                   (err) => {
                     if (err) {
                       console.error(err);
@@ -57,16 +54,14 @@ var upload_files = function (req, res) {
             fs.existsSync(
               baseurl +
               "/" +
-              categoryId +
+              category +
               "/" +
-              subCategoryId +
-              "/" +
-              childCategoryId
+              subCategory,
             )
           ) {
             //const file = req.files.file;
             file.mv(
-              `${baseurl}/${categoryId}/${subCategoryId}/${childCategoryId}/${file.name}`,
+              `${baseurl}/${category}/${subCategory}/${file.name}`,
               (err) => {
                 if (err) {
                   console.error(err);
@@ -85,25 +80,18 @@ var upload_files = function (req, res) {
   }
 };
 
-var uploadAffiliate_files = function (req, res) {
+var upload_category_files = function (req, res) {
   if (req.files) {
-    const { categoryId, subCategoryId, childCategoryId } = req.body;
-    const file = req.files.photo;
-    //console.log("request: " + req.files.file.mimetype);
-    const RawfileType = req.files.photo.mimetype;
-    const fileType = RawfileType.split("/")[1];
+    const { categoryName } = req.body;
+    const file = req.files.image;
     fs.access(
-      affiliateurl + "/" + categoryId + "/" + subCategoryId + "/" + childCategoryId,
+      baseurlcategory + "/" + categoryName + "/",
       (error) => {
         if (error) {
           fs.mkdir(
-            affiliateurl +
+            baseurlcategory +
             "/" +
-            categoryId +
-            "/" +
-            subCategoryId +
-            "/" +
-            childCategoryId,
+            categoryName,
             { recursive: true },
             function (err) {
               if (err) {
@@ -112,11 +100,10 @@ var uploadAffiliate_files = function (req, res) {
                   return res.status(400).json({ msg: "no file Uploaded" });
                 }
                 file.mv(
-                  `${affiliateurl}/${categoryId}/${subCategoryId}/${childCategoryId}/${file.name}`,
+                  `${baseurlcategory}/${categoryName}/${file.name}`,
                   (err) => {
                     if (err) {
                       console.error(err);
-                      //   return res.status(500).send(err);
                     }
                     res(null, {
                       success: true,
@@ -129,25 +116,21 @@ var uploadAffiliate_files = function (req, res) {
                   }
                 );
 
-                console.log(" directory successfully created.", affiliateurl);
+                console.log(" directory successfully created.", baseurlcategory);
               }
             }
           );
         } else {
           if (
             fs.existsSync(
-              affiliateurl +
+              baseurlcategory +
               "/" +
-              categoryId +
-              "/" +
-              subCategoryId +
-              "/" +
-              childCategoryId
+              categoryName,
             )
           ) {
             //const file = req.files.file;
             file.mv(
-              `${affiliateurl}/${categoryId}/${subCategoryId}/${childCategoryId}/${file.name}`,
+              `${baseurlcategory}/${categoryName}/${file.name}`,
               (err) => {
                 if (err) {
                   console.error(err);
@@ -165,4 +148,5 @@ var uploadAffiliate_files = function (req, res) {
     );
   }
 };
-module.exports = { upload_files, uploadAffiliate_files };
+
+module.exports = { upload_files, upload_category_files };

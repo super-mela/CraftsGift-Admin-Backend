@@ -7,6 +7,13 @@ const verifyEmail = require("../../../middleware/verifyEmail");
 require("dotenv").config();
 const web = express();
 const stripe = require("stripe")(process.env.Stripe_Secret_Key);
+var paypal = require('paypal-rest-sdk');
+
+paypal.configure({
+    'mode': 'sandbox', //sandbox or live
+    'client_id': process.env.Pay_Pal_Client_ID,
+    'client_secret': process.env.Pay_pal_Client_Secret,
+});
 
 async function run() {
     try {
@@ -19,6 +26,7 @@ async function run() {
         const reviewsCollection = db.collection("reviews");
         const invoicesCollection = db.collection("invoices");
         const offersCollection = db.collection("offers");
+        const wishlistCollection = db.collection("wishlist");
 
         /* ************** APIs ********************* */
 
@@ -343,7 +351,7 @@ async function run() {
             try {
                 const cartItems = req.body;
                 const cart = [];
-                for (id in cartItems) {
+                for (const id in cartItems) {
                     const query = { _id: ObjectId(id) };
 
                     const item = await productsCollection.findOne(query);
@@ -361,7 +369,7 @@ async function run() {
             try {
                 const wishlistItems = req.body;
                 const wishlist = [];
-                for (id in wishlistItems) {
+                for (const id in wishlistItems) {
                     const query = { _id: ObjectId(id) };
 
                     const item = await productsCollection.findOne(query);
@@ -370,6 +378,79 @@ async function run() {
                 res.json(wishlist);
             } catch (err) {
                 console.log(err);
+                res.status(400).json("Server Error");
+            }
+        });
+
+        /*======================wishlist=====================*/
+
+        web.post("/wishlist-cart", async (req, res) => {
+            try {
+                const wishlistItems = req.body;
+                const wishlist = [];
+                for (const id in wishlistItems) {
+                    const query = { _id: ObjectId(id) };
+
+                    const item = await productsCollection.findOne(query);
+                    wishlist.push(item);
+                }
+                res.json(wishlist);
+            } catch (err) {
+                console.log(err);
+                res.status(400).json("Server Error");
+            }
+        });
+
+        web.post("/getWishlist", async (req, res) => {
+            try {
+                const data = req.body;
+                console.log(data)
+                const result = await wishlistCollection.findOne({ user: data.user });
+                console.log(result)
+                res.json(result);
+            } catch (error) {
+                console.log(error);
+                res.status(400).json("Server Error");
+            }
+        });
+        web.post("/addWishlist", verifyJwtToken, verifyEmail, async (req, res) => {
+            try {
+                const data = req.body;
+                const find = await wishlistCollection.findOne({ user: data.user })
+                if (find) {
+                    const result = await wishlistCollection.updateOne(
+                        { user: data.user },
+                        { $set: { wishlistCart: data.wishlistCart } },
+                        { upsert: true });
+                    res.json(result);
+                }
+                else {
+                    const result = await wishlistCollection.insertOne(data);
+                    res.json(result);
+                }
+            } catch (error) {
+                console.log(error);
+                res.status(400).json("Server Error");
+            }
+        });
+        web.post("/removeWishlist", verifyJwtToken, verifyEmail, async (req, res) => {
+            try {
+                const data = req.body;
+                const find = await wishlistCollection.findOne({ user: data.user })
+                if (find && Object.keys(data.wishlistCart).length) {
+                    const result = await wishlistCollection.updateOne(
+                        { user: data.user },
+                        { $set: { wishlistCart: data.wishlistCart } },
+                        { upsert: true });
+                    res.json(result);
+                }
+                else {
+                    const result = await wishlistCollection.deleteOne({ user: data.user });
+
+                    res.json(result);
+                }
+            } catch (error) {
+                console.log(error);
                 res.status(400).json("Server Error");
             }
         });
@@ -400,7 +481,52 @@ async function run() {
                 }
             }
         );
+        web.post(
+            "/create-payment-intent-paypal",
+            verifyJwtToken,
+            verifyEmail,
+            async (req, res) => {
+                try {
+                    var payment = {
+                        'intent': 'sale',
+                        'payer': {
+                            'payment_method': 'paypal'
+                        },
+                        'redirect_urls': {
+                            'return_url': 'http://localhost:3000/success',
+                            'cancel_url': 'http://localhost:3000/cancel'
+                        },
+                        'transactions': [{
+                            'amount': {
+                                'total': '10.00',
+                                'currency': 'USD'
+                            },
+                            'description': 'This is the payment description.'
+                        }]
+                    };
 
+                    paypal.payment.create(payment, function (error, payment) {
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            console.log(payment);
+                            // Redirect the user to PayPal to complete the payment
+                            var redirectUrl;
+                            for (var i = 0; i < payment.links.length; i++) {
+                                var link = payment.links[i];
+                                if (link.method === 'REDIRECT') {
+                                    redirectUrl = link.href;
+                                }
+                            }
+                            res.redirect(redirectUrl);
+                        }
+                    });
+
+                } catch (error) {
+                    res.status(400).json("Server Error");
+                }
+            }
+        );
         /* ================ Place Payment Details/order ================== */
         web.post("/invoices", verifyJwtToken, verifyEmail, async (req, res) => {
             try {

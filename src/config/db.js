@@ -6,6 +6,7 @@ const client = new MongoClient(uri, {
     useUnifiedTopology: true,
     serverApi: ServerApiVersion.v1,
 });
+
 module.exports = {
     client: new MongoClient(uri, {
         useNewUrlParser: true,
