@@ -8,7 +8,7 @@ const { queue } = require("../../../kue");
 const config = require("../../../config").data;
 const AWS = require("aws-sdk");
 const { Op } = require("sequelize");
-const { upload_files, uploadAffiliate_files } = require("../../../photosave");
+const { upload_files } = require("../../../photosave");
 const MultiPhotos = require("../../../multiphoto");
 const { ObjectId } = require("mongodb");
 

@@ -59,7 +59,6 @@ var schemas = {
     category: Joi.object().keys({
         categoryName: Joi.string().required(),
         subCategories: Joi.array().items(Joi.string()).required(),
-        image: Joi.string().required(),
     }),
     location: Joi.object().keys({
         name: Joi.string().required(),

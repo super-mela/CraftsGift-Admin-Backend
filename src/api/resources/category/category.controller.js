@@ -3,6 +3,7 @@ const { db } = require("../../../models")
 const { Op } = require("sequelize");
 const { ObjectId } = require("mongodb");
 const config = require("../../../config").data;
+const { upload_category_files } = require("../../../photosave");
 
 const dbs = config.db.dbs
 
@@ -13,23 +14,46 @@ module.exports = {
 
   async addCategory(req, res, next) {
     try {
-      const { categoryName, subCategories, image } = req.body;
+      const { categoryName, subCategories } = req.body;
       categoriesCollections
         .findOne({ categoryName: categoryName })
         .then((data) => {
           if (data) {
             return categoriesCollections.updateOne(
               { _id: ObjectId(data._id) },
-              { $set: { subCategories: subCategories, image: image } },
+              {
+                $set: {
+                  subCategories: JSON.parse(subCategories),
+                  image: req.files ? categoryName + "/" + req.files.image.name : "no image",
+                }
+              },
               { upsert: true }
             );
           }
-          return categoriesCollections.insertOne({ categoryName: categoryName, subCategories: subCategories, image: image, date: new Date });
+          return categoriesCollections.insertOne({
+            categoryName: categoryName,
+            subCategories: JSON.parse(subCategories),
+            image: req.files ? categoryName + "/" + req.files.image.name : "no image",
+            date: new Date
+          });
         })
         .then((category) => {
-          res
-            .status(200)
-            .json({ success: true, msg: "Successfully inserted category" });
+          if (req.files) {
+            upload_category_files(req, function (err, result) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.status(200).json({
+                  success: true,
+                  msg: "Successfully inserted category",
+                });
+              }
+            });
+          } else {
+            res
+              .status(200)
+              .json({ success: true, msg: "Successfully inserted category" });
+          }
         })
         .catch(function (err) {
           next(err);
@@ -100,19 +124,34 @@ module.exports = {
 
   async updateCategory(req, res, next) {
     try {
-      const { _id, categoryName, subCategory, image } = req.body;
+      const { _id, categoryName, subCategory } = req.body;
       categoriesCollections.findOne({ _id: ObjectId(_id) }).then((data) => {
         if (data) {
           return categoriesCollections.updateOne(
             { _id: ObjectId(data._id) },
-            { $set: { categoryName: categoryName, subCategory: subCategory, image: image } },
+            { $set: { categoryName: categoryName, subCategory: JSON.parse(subCategory), image: req.files ? categoryName + "/" + req.files.image.name : "no image" } },
             { upsert: true }
           );
         }
         throw new RequestError("Category Not Found", 409);
       })
         .then((category) => {
-          res.status(200).json({ success: true, msg: "Successfully Updated" });
+          if (req.files) {
+            upload_category_files(req, function (err, result) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.status(200).json({
+                  success: true,
+                  msg: "Successfully updated category",
+                });
+              }
+            });
+          } else {
+            res
+              .status(200)
+              .json({ success: true, msg: "Successfully updated category" });
+          }
         })
         .catch(function (err) {
           next(err);
@@ -272,19 +311,34 @@ module.exports = {
 
   async getMainListUpdate(req, res, next) {
     try {
-      const { _id, categoryName, subCategories, image } = req.body;
+      const { _id, categoryName, subCategories } = req.body;
       categoriesCollections.findOne({ _id: ObjectId(_id) }).then((data) => {
         if (data) {
           return categoriesCollections.updateOne(
             { _id: ObjectId(data._id) },
-            { $set: { categoryName: categoryName, subCategories: subCategories, image: image } },
+            { $set: { categoryName: categoryName, subCategories: JSON.parse(subCategories), image: req.files ? categoryName + "/" + req.files.image.name : "no image" } },
             { upsert: true }
           );
         }
         throw new RequestError("Category Not Found", 409);
       })
         .then((category) => {
-          res.status(200).json({ success: true, msg: "Successfully Updated" });
+          if (req.files) {
+            upload_category_files(req, function (err, result) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.status(200).json({
+                  success: true,
+                  msg: "Successfully updated category",
+                });
+              }
+            });
+          } else {
+            res
+              .status(200)
+              .json({ success: true, msg: "Successfully updated category" });
+          }
         })
         .catch(function (err) {
           next(err);
