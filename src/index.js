@@ -15,7 +15,6 @@ global.appRoot = path.resolve(__dirname);
 const PORT = config.app.port;
 const app = appManager.setup(config);
 
-// console.log(config)
 /*cors handling*/
 app.use(
   cors({
@@ -25,11 +24,8 @@ app.use(
     methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH']
   })
 );
-// app.options("*", cors());
 
 app.use(fileupload());
-
-
 
 /* Route handling */
 app.use("/api", restRouter);
@@ -55,19 +51,6 @@ app.use((error, req, res, next) => {
     res.render(error.status.toString(), { layout: null });
   }
 });
-
-// kue.init();
-/* Database Connection */
-//{ alter: true }
-// db.sequelize
-//   .sync()
-//   .then(function () {
-//     console.log("Nice! Database looks fine");
-//     scheduler.init();
-//   })
-//   .catch(function (err) {
-//     console.log(err, "Something went wrong with the Database Update!");
-//   });
 
 /* Start Listening service */
 app.listen(PORT, () => {

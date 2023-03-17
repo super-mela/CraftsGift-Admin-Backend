@@ -125,11 +125,11 @@ module.exports = {
   async updateCategory(req, res, next) {
     try {
       const { _id, categoryName, subCategory } = req.body;
-      categoriesCollections.findOne({ _id: ObjectId(_id) }).then((data) => {
-        if (data) {
+      categoriesCollections.findOne({ _id: ObjectId(_id) }).then((category) => {
+        if (category) {
           return categoriesCollections.updateOne(
-            { _id: ObjectId(data._id) },
-            { $set: { categoryName: categoryName, subCategory: JSON.parse(subCategory), image: req.files ? categoryName + "/" + req.files.image.name : "no image" } },
+            { _id: ObjectId(category._id) },
+            { $set: { categoryName: categoryName, subCategory: JSON.parse(subCategory), image: req.files ? categoryName + "/" + req.files.image.name : category.image } },
             { upsert: true }
           );
         }
@@ -312,11 +312,11 @@ module.exports = {
   async getMainListUpdate(req, res, next) {
     try {
       const { _id, categoryName, subCategories } = req.body;
-      categoriesCollections.findOne({ _id: ObjectId(_id) }).then((data) => {
-        if (data) {
+      categoriesCollections.findOne({ _id: ObjectId(_id) }).then((category) => {
+        if (category) {
           return categoriesCollections.updateOne(
-            { _id: ObjectId(data._id) },
-            { $set: { categoryName: categoryName, subCategories: JSON.parse(subCategories), image: req.files ? categoryName + "/" + req.files.image.name : "no image" } },
+            { _id: ObjectId(category._id) },
+            { $set: { categoryName: categoryName, subCategories: JSON.parse(subCategories), image: req.files ? categoryName + "/" + req.files.image.name : category.image } },
             { upsert: true }
           );
         }

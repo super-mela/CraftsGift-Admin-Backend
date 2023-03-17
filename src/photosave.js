@@ -2,8 +2,8 @@ const fs = require("fs");
 
 var baseurl = __dirname + '/photo/product';
 var baseurlcategory = __dirname + '/photo/category';
+var baseurloffer = __dirname + '/photo/offer';
 
-console.log(baseurl)
 
 var upload_files = function (req, res) {
   if (req.files) {
@@ -149,4 +149,53 @@ var upload_category_files = function (req, res) {
   }
 };
 
-module.exports = { upload_files, upload_category_files };
+var upload_offer_files = function (req, res) {
+  if (req.files) {
+    const file = req.files.image;
+    fs.access(baseurloffer,
+      (error) => {
+        if (error) {
+          fs.mkdir(baseurloffer,
+            { recursive: true },
+            function (err) {
+              if (err) {
+              } else {
+                if (req.files === null) {
+                  return res.status(400).json({ msg: "no file Uploaded" });
+                }
+                file.mv(`${baseurloffer}/${file.name}`,
+                  (err) => {
+                    if (err) {
+                      console.error(err);
+                    }
+                    res(null, {
+                      success: true,
+                      msg: "Successfully inserted product",
+                    });
+                  }
+                );
+              }
+            }
+          );
+        } else {
+          if (
+            fs.existsSync(baseurloffer)) {
+            file.mv(`${baseurloffer}/${file.name}`,
+              (err) => {
+                if (err) {
+                  console.error(err);
+                }
+                res(null, {
+                  success: true,
+                  msg: "Successfully inserted product",
+                });
+              }
+            );
+          }
+        }
+      }
+    );
+  }
+};
+
+module.exports = { upload_files, upload_category_files, upload_offer_files };

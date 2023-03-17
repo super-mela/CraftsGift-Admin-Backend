@@ -3,6 +3,7 @@ const { db } = require("../../../models")
 const Sequelize = require("sequelize");
 const { ObjectId } = require("mongodb");
 const config = require("../../../config").data;
+const { upload_offer_files } = require('../../../photosave');
 const Op = Sequelize.Op;
 
 const dbs = config.db.dbs;
@@ -21,15 +22,45 @@ module.exports = {
                     if (offer) {
                         return offersCollection.updateOne(
                             { _id: ObjectId(offer._id) },
-                            { $set: { name: name, discount: discount, image: image, expiresIn: expiresIn, leastAmount: leastAmount } },
+                            {
+                                $set: {
+                                    name: name,
+                                    discount: discount,
+                                    image: req.files ? req.files.image.name : "no image",
+                                    expiresIn: expiresIn,
+                                    leastAmount: leastAmount
+                                }
+                            },
                             { upsert: true }
                         )
                     }
-                    return offersCollection.insertOne(req.body)
+                    return offersCollection.insertOne({
+                        name: name,
+                        discount: discount,
+                        coupon: coupon,
+                        image: req.files ? req.files.image.name : "no image",
+                        expiresIn: expiresIn,
+                        leastAmount: leastAmount
+                    })
 
                 })
                 .then(success => {
-                    res.status(200).json({ 'success': true, msg: "Successfully inserted offer" });
+                    if (req.files) {
+                        upload_offer_files(req, function (err, result) {
+                            if (err) {
+                                res.send(err);
+                            } else {
+                                res.status(200).json({
+                                    success: true,
+                                    msg: "offer Successfully inserted",
+                                });
+                            }
+                        });
+                    } else {
+                        res
+                            .status(200)
+                            .json({ success: true, msg: "offer Successfully inserted" });
+                    }
                 })
                 .catch(function (err) {
                     console.log(err)
@@ -68,15 +99,38 @@ module.exports = {
                     if (offer) {
                         return offersCollection.updateOne(
                             { _id: ObjectId(offer._id) },
-                            { $set: { name: name, discount: discount, image: image, expiresIn: expiresIn, leastAmount: leastAmount } },
+                            {
+                                $set: {
+                                    name: name,
+                                    discount: discount,
+                                    coupon: coupon,
+                                    image: req.files ? req.files.image.name : offer.image,
+                                    expiresIn: expiresIn,
+                                    leastAmount: leastAmount
+                                }
+                            },
                             { upsert: true }
                         )
                     }
                     throw new RequestError("No data found", 409)
-
                 })
                 .then(e => {
-                    res.status(200).json({ 'success': true, msg: 'Updated Successfully' });
+                    if (req.files) {
+                        upload_offer_files(req, function (err, result) {
+                            if (err) {
+                                res.send(err);
+                            } else {
+                                res.status(200).json({
+                                    success: true,
+                                    msg: "offer Successfully updated",
+                                });
+                            }
+                        });
+                    } else {
+                        res
+                            .status(200)
+                            .json({ success: true, msg: "offer Successfully updated" });
+                    }
                 })
                 .catch(function (err) {
                     next(err)
