@@ -200,7 +200,7 @@ var upload_offer_files = function (req, res) {
 
 var upload_customOrder_files = function (req, res) {
   if (req.files) {
-    const file = req.files.image;
+    const file = req.files.file;
     fs.access(baseurlcustomOrder,
       (error) => {
         if (error) {

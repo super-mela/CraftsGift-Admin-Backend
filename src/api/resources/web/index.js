@@ -543,8 +543,6 @@ async function run() {
             }
         });
         web.post("/customOrder", verifyJwtToken, verifyEmail, async (req, res) => {
-            console.log(req.body)
-            console.log(req.files)
             try {
                 const {
                     orderId,
@@ -562,7 +560,7 @@ async function run() {
                     orderId: orderId,
                     address: address,
                     city: city,
-                    status: "Pendding",
+                    status: "Pending",
                     country: country,
                     email: email,
                     firstname: firstname,
@@ -596,6 +594,31 @@ async function run() {
                     });
             } catch (err) {
                 throw new RequestError("Error");
+            }
+        });
+        web.get("/customOrders", verifyJwtToken, verifyEmail, async (req, res) => {
+            try {
+                const result = await customOrederCollection
+                    .find({ email: req.query.email })
+                    .skip(parseInt(req.query.page) * parseInt(req.query.size))
+                    .limit(parseInt(req.query.size))
+                    .toArray();
+
+                res.json(result);
+            } catch (err) {
+                res.status(400).json("Server Error");
+            }
+        });
+
+        web.get("/customOrders/:uid", verifyJwtToken, verifyEmail, async (req, res) => {
+            try {
+                const query = { orderId: req.params.uid };
+
+                const result = await customOrederCollection.findOne(query);
+
+                res.json(result);
+            } catch (error) {
+                res.status(400).json("Server Error");
             }
         });
 
