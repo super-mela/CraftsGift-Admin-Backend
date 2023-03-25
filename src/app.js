@@ -39,6 +39,7 @@ module.exports = {
         app.use("/product", express.static(path.join(__dirname, 'photo/product/')));
         app.use("/category", express.static(path.join(__dirname, 'photo/category/')));
         app.use("/offer", express.static(path.join(__dirname, 'photo/offer/')));
+        app.use("/customorder", express.static(path.join(__dirname, 'photo/customOrder/')));
         app.use("/multiImages", express.static(path.join(__dirname, 'photo/product/MultiImages')));
         app.use(passport.initialize());
         app.use(passport.session());

@@ -7,6 +7,7 @@ const verifyEmail = require("../../../middleware/verifyEmail");
 require("dotenv").config();
 const web = express();
 const stripe = require("stripe")(process.env.Stripe_Secret_Key);
+const { upload_customOrder_files } = require('../../../photosave')
 var paypal = require('paypal-rest-sdk');
 
 paypal.configure({
@@ -27,6 +28,7 @@ async function run() {
         const invoicesCollection = db.collection("invoices");
         const offersCollection = db.collection("offers");
         const wishlistCollection = db.collection("wishlist");
+        const customOrederCollection = db.collection("customOrder")
 
         /* ************** APIs ********************* */
 
@@ -404,9 +406,7 @@ async function run() {
         web.post("/getWishlist", async (req, res) => {
             try {
                 const data = req.body;
-                console.log(data)
                 const result = await wishlistCollection.findOne({ user: data.user });
-                console.log(result)
                 res.json(result);
             } catch (error) {
                 console.log(error);
@@ -540,6 +540,62 @@ async function run() {
                 res.json(result);
             } catch (err) {
                 res.status(400).json("Server Error");
+            }
+        });
+        web.post("/customOrder", verifyJwtToken, verifyEmail, async (req, res) => {
+            console.log(req.body)
+            console.log(req.files)
+            try {
+                const {
+                    orderId,
+                    address,
+                    city,
+                    country,
+                    email,
+                    firstname,
+                    lastname,
+                    phone,
+                    zip,
+                    description
+                } = req.body;
+                customOrederCollection.insertOne({
+                    orderId: orderId,
+                    address: address,
+                    city: city,
+                    status: "Pendding",
+                    country: country,
+                    email: email,
+                    firstname: firstname,
+                    lastname: lastname,
+                    phone: phone,
+                    zip: zip,
+                    description: description,
+                    date: new Date(),
+                    image: req.files
+                        ?
+                        req.files.file.name
+                        : "no image",
+                })
+                    .then((customOrder) => {
+                        if (req.files) {
+                            upload_customOrder_files(req, function (err, result) {
+                                if (err) {
+                                    res.send(err);
+                                } else {
+                                    //use mailer hear to send email to the owner
+                                    res.status(200).json(customOrder);
+                                }
+                            });
+                        } else {
+                            //use mailer hear to send email to the owner
+                            res.status(200).json(customOrder);
+                        }
+                    })
+                    .catch(function (err) {
+                        next(err);
+                    });
+            } catch (err) {
+                throw new RequestError("Error");
             }
         });
 
