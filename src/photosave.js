@@ -4,6 +4,7 @@ var baseurl = __dirname + '/photo/product';
 var baseurlcategory = __dirname + '/photo/category';
 var baseurloffer = __dirname + '/photo/offer';
 var baseurlcustomOrder = __dirname + '/photo/customOrder';
+var baseurlprofile = __dirname + '/photo/profile';
 
 var upload_files = function (req, res) {
   if (req.files) {
@@ -247,4 +248,61 @@ var upload_customOrder_files = function (req, res) {
   }
 };
 
-module.exports = { upload_files, upload_category_files, upload_offer_files, upload_customOrder_files };
+var upload_profile = function (req, res) {
+  if (req.files) {
+    const file = req.files.file;
+    fs.access(baseurlprofile,
+      (error) => {
+        if (error) {
+          fs.mkdir(baseurlprofile,
+            { recursive: true },
+            function (err) {
+              if (err) {
+              } else {
+                if (req.files === null) {
+                  return res.status(400).json({ msg: "no file Uploaded" });
+                }
+                file.mv(`${baseurlprofile}/${file.name}`,
+                  (err) => {
+                    if (err) {
+                      console.error(err);
+                    }
+                    res(null, {
+                      success: true,
+                      msg: "Successfully inserted product",
+                      url: file.name,
+                    });
+                  }
+                );
+              }
+            }
+          );
+        } else {
+          if (
+            fs.existsSync(baseurlprofile)) {
+            file.mv(`${baseurlprofile}/${file.name}`,
+              (err) => {
+                if (err) {
+                  console.error(err);
+                }
+                res(null, {
+                  success: true,
+                  msg: "Successfully inserted product",
+                  url: file.name,
+                });
+              }
+            );
+          }
+        }
+      }
+    );
+  }
+};
+
+module.exports = {
+  upload_files,
+  upload_category_files,
+  upload_offer_files,
+  upload_customOrder_files,
+  upload_profile
+};

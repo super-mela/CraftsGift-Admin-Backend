@@ -7,7 +7,7 @@ const verifyEmail = require("../../../middleware/verifyEmail");
 require("dotenv").config();
 const web = express();
 const stripe = require("stripe")(process.env.Stripe_Secret_Key);
-const { upload_customOrder_files } = require('../../../photosave')
+const { upload_customOrder_files, upload_profile } = require('../../../photosave')
 var paypal = require('paypal-rest-sdk');
 
 paypal.configure({
@@ -621,7 +621,27 @@ async function run() {
                 res.status(400).json("Server Error");
             }
         });
+        web.post("/profileupdate", verifyJwtToken, verifyEmail, async (req, res) => {
+            try {
+                if (req.files) {
+                    upload_profile(req, function (err, result) {
+                        if (err) {
+                            res.send(err);
+                        } else {
+                            res.status(200).json(result);
+                        }
+                    });
+                } else {
+                    res.status(400).json({
+                        success: false,
+                        msg: "File not found",
+                    });
+                }
 
+            } catch (err) {
+                throw new RequestError("Error");
+            }
+        });
         // web.post("/invoices/v2", verifyJwtToken, verifyEmail, async (req, res) => {
         //   try {
         //     const { orderDetails } = req.body;
