@@ -182,7 +182,7 @@ module.exports = {
   async getAllCustomer(req, res, next) {
     usersCollections
       .find()
-      .sort({ date: -1 })
+      .sort({ name: 1 })
       .toArray()
       .then((user) => {
         if (user) {
