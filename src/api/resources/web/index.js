@@ -99,7 +99,7 @@ async function run() {
         // Create user
         web.post("/users", async (req, res) => {
             const user = req.body;
-
+            user.date = new Date()
             const result = await usersCollections.insertOne(user);
 
             res.json(result);
@@ -709,8 +709,8 @@ async function run() {
             try {
                 const size = req.query.size;
 
-                const result = await offersCollection
-                    .find()
+                const result = await offersCollection.find()
+                    .sort({ date: -1 })
                     .limit(parseInt(size))
                     .toArray();
                 res.json(result);

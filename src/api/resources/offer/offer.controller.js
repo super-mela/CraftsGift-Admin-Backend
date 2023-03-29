@@ -40,7 +40,8 @@ module.exports = {
                         coupon: coupon,
                         image: req.files ? req.files.image.name : "no image",
                         expiresIn: expiresIn,
-                        leastAmount: leastAmount
+                        leastAmount: leastAmount,
+                        data: new Date()
                     })
 
                 })
@@ -76,6 +77,7 @@ module.exports = {
     async getAlloffer(req, res, next) {
         try {
             offersCollection.find()
+                .sort({ date: -1 })
                 .toArray()
                 .then(list => {
                     res.status(200).json({ 'success': true, data: list });

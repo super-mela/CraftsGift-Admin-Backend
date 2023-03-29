@@ -186,20 +186,10 @@ module.exports = {
     ////////////////////////////////////////////////////////////
 
     async getAllcustomOrderList(req, res, next) {
-        let options = {};
-        if (req.query.sort) {
-            if (req.query.sort == 'name') {
-                options = {
-                    sort: { date: 1 },
-                };
-            } else {
-                options = {
-                    sort: { date: -1 },
-                };
-            }
-        }
         try {
-            customOrederCollection.find(options).toArray()
+            customOrederCollection.find()
+                .sort({ date: -1 })
+                .toArray()
                 .then(list => {
                     res.status(200).json({ 'success': true, order: list });
                 })
