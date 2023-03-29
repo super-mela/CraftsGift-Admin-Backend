@@ -7,7 +7,7 @@ const { ObjectId } = require("mongodb");
 
 const dbs = config.db.dbs;
 const invoicesCollection = dbs.collection("invoices");
-
+const customOrederCollection = dbs.collection("customOrder")
 
 module.exports = {
 
@@ -179,6 +179,37 @@ module.exports = {
             res.status(500).json({ 'errors': "" + err });
         }
     },
+
+
+    /////////////////////////////////////////////////////////////
+    ///////////////////custom orders////////////////////////////
+    ////////////////////////////////////////////////////////////
+
+    async getAllcustomOrderList(req, res, next) {
+        let options = {};
+        if (req.query.sort) {
+            if (req.query.sort == 'name') {
+                options = {
+                    sort: { date: 1 },
+                };
+            } else {
+                options = {
+                    sort: { date: -1 },
+                };
+            }
+        }
+        try {
+            customOrederCollection.find(options).toArray()
+                .then(list => {
+                    res.status(200).json({ 'success': true, order: list });
+                })
+                .catch(function (err) {
+                    next(err)
+                });
+        }
+        catch (err) {
+            res.status(500).json({ 'errors': "" + err });
+        }
+    },
+
 }
-
-

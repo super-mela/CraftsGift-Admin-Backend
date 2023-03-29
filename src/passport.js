@@ -9,7 +9,7 @@ const { db } = require("./models");
 const { ObjectId } = require("mongodb");
 
 const dbs = config.db.dbs;
-const usersCollections = dbs.collection(" adminusers");
+const usersCollections = dbs.collection("adminusers");
 
 var TokenExtractor = function (req) {
   var token = null;
