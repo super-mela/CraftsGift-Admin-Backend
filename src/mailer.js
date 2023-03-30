@@ -48,53 +48,51 @@ module.exports = {
     sendFeedback: (emaildata) => {
         return new Promise((resolve, reject) => {
             try {
-                const { email, description, } = emaildata
-                usersCollections.findOne({ email: email })
-                    .then((user) => {
-                        if (user) {
-                            var smtpTransport = nodemailer.createTransport({
-                                service: 'gmail',
-                                auth: {
-                                    user: process.env.MAIL_USERNAME,
-                                    pass: process.env.MAIL_PASSWORD
-                                },
-                                tls: { rejectUnauthorized: false },
-                            });
+                if (emaildata) {
+                    const { email, message, subject, name } = emaildata
+                    var smtpTransport = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: process.env.MAIL_USERNAME,
+                            pass: process.env.MAIL_PASSWORD
+                        },
+                        tls: { rejectUnauthorized: false },
+                    });
+                    smtpTransport.sendMail({
+                        from: process.env.MAIL_FROM,
+                        to: process.env.MAIL_TO,
+                        subject: subject,
+                        html: `<h1>Feedback From ${name}</h1>` + "<br><br>Dear Crafts Gift,<br><br> " + message + "<br><br><br><br> Contact Information  " + email,
+                    }, function (error, info) {
+                        if (error) {
+
+                            return reject({
+                                name: "ProductException",
+                                msg: 'Email Sending Failed'
+                            })
+                        } else {
                             smtpTransport.sendMail({
                                 from: process.env.MAIL_FROM,
-                                to: process.env.MAIL_TO,
+                                to: user.email,
                                 subject: 'Crafts Gift Feedback',
-                                html: `<h1>Feedback From ${user.name}</h1>` + "<br><br>Dear Crafts Gift,<br><br> " + description + "<br><br><br><br> Contact Information  " + email,
+                                html: `<h4>Dear user ${user.name}</h4>` + "<br><br>We Would like to thankyou for your feedback<br><br> " + "<br><br><br><br> Crafts Gift ",
                             }, function (error, info) {
                                 if (error) {
-
                                     return reject({
                                         name: "ProductException",
                                         msg: 'Email Sending Failed'
                                     })
-                                } else {
-                                    smtpTransport.sendMail({
-                                        from: process.env.MAIL_FROM,
-                                        to: user.email,
-                                        subject: 'Crafts Gift Feedback',
-                                        html: `<h4>Dear user ${user.name}</h4>` + "<br><br>We Would like to thankyou for your feedback<br><br> " + "<br><br><br><br> Crafts Gift ",
-                                    }, function (error, info) {
-                                        if (error) {
-                                            return reject({
-                                                name: "ProductException",
-                                                msg: 'Email Sending Failed'
-                                            })
-                                        }
-                                        return resolve(true)
-                                    })
                                 }
-
-                            });
-                        } else throw {
-                            name: "ProductException",
-                            msg: 'Email Body not available'
+                                return resolve(true)
+                            })
                         }
-                    })
+
+                    });
+                } else throw {
+                    name: "ProductException",
+                    msg: 'Email Body not available'
+                }
+
             } catch (err) {
                 reject(err);
             }
@@ -120,7 +118,7 @@ module.exports = {
                                 from: process.env.MAIL_FROM,
                                 to: user.email,
                                 subject: 'Crafts Gift Custom Order Feedback',
-                                html: `<h1>Feedback From Crafts Gift for custom order number ${orderId}</h1>` + `<br><br>Dear User ${user.name},<br><br> ` + description + "<br><br><br><br> This is a system generated mail. Please do not reply to this email ID.<br>Warm Regards,<br> Customer Care<br> Product",
+                                html: `<h1>Response From Crafts Gift for custom order number ${orderId}</h1>` + `<br><br>Dear User ${user.name},<br><br> ` + description + "<br><br><br><br> This is a system generated mail. Please do not reply to this email ID.<br>Warm Regards,<br> Customer Care<br> Product",
                             }, function (error, info) {
                                 if (error) {
 
@@ -163,7 +161,7 @@ module.exports = {
                                 from: process.env.MAIL_FROM,
                                 to: process.env.MAIL_TO,
                                 subject: 'Crafts Gift Customer Custom Order Description',
-                                html: `<h1>Custom Order Description From ${user.name}</h1>` + "<br><br>Dear Crafts Gift,<br><br> " + description + "<br><br><br><br> Contact Information  " + email,
+                                html: `<h1>Custom Order Description From ${user.name}</h1>` + `<br/><h3>Order ID: ${orderId}</h3>` + "<br><br>Dear Crafts Gift,<br><br> " + description + "<br><br><br><br> Contact Information  " + email,
                             }, function (error, info) {
                                 if (error) {
 
@@ -180,6 +178,9 @@ module.exports = {
                             name: "ProductException",
                             msg: 'Email Body not available'
                         }
+                    })
+                    .catch((error) => {
+                        reject(error)
                     })
             } catch (err) {
                 reject(err);

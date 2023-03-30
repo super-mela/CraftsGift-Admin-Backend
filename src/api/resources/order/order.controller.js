@@ -210,7 +210,7 @@ module.exports = {
                 .then(list => {
                     return customOrederCollection.updateOne(
                         { _id: ObjectId(list._id) },
-                        { $set: { status: status, deliverydate: deliverydate } },
+                        { $set: { status: status, deliverydate: new Date(deliverydate) } },
                         { upsert: true })
                 })
                 .then((success) => {

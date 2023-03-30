@@ -581,7 +581,7 @@ async function run() {
                                 if (err) {
                                     res.send(err);
                                 } else {
-                                    //use mailer hear to send email to the owner
+                                    //send email to the owner
                                     mailer.sendCustomOrderFromCustomer({ email: email, description: description, orderId: orderId })
                                     res.status(200).json(customOrder);
                                 }
@@ -775,6 +775,34 @@ async function run() {
             } catch (error) {
                 console.log(error);
                 res.status(400).json("Server Error");
+            }
+        });
+        web.post("/feedback", async (req, res) => {
+            try {
+                const emailData = req.body
+                //write code here that send email to the client 
+                console.log("================================")
+                console.log(emailData)
+                console.log("================================")
+                mailer.sendFeedback(emailData);
+                res.status(200).json({ 'success': true, msg: "Successfully Sent Email" });
+            }
+            catch (err) {
+                res.status(500).json({ 'errors': "" + err });
+            }
+        });
+        web.post("/customEmail", verifyJwtToken, verifyEmail, async (req, res) => {
+            try {
+                const emailData = req.body
+                //write code here that send email to the client 
+                console.log("================================")
+                console.log(emailData)
+                console.log("================================")
+                mailer.sendCustomOrderFromCustomer(emailData);
+                res.status(200).json({ 'success': true, msg: "Successfully Sent Email" });
+            }
+            catch (err) {
+                res.status(500).json({ 'errors': "" + err });
             }
         });
         /* ================================== */
