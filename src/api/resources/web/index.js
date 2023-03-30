@@ -8,6 +8,7 @@ require("dotenv").config();
 const web = express();
 const stripe = require("stripe")(process.env.Stripe_Secret_Key);
 const { upload_customOrder_files, upload_profile } = require('../../../photosave')
+const mailer = require('../../../mailer')
 var paypal = require('paypal-rest-sdk');
 
 paypal.configure({
@@ -581,6 +582,7 @@ async function run() {
                                     res.send(err);
                                 } else {
                                     //use mailer hear to send email to the owner
+                                    mailer.sendCustomOrderFromCustomer({ email: email, description: description, orderId: orderId })
                                     res.status(200).json(customOrder);
                                 }
                             });

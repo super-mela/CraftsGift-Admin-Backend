@@ -4,6 +4,7 @@ const config = require("../../../config").data;
 
 var Sequelize = require("sequelize");
 const { ObjectId } = require("mongodb");
+import mailer from "../../../mailer";
 
 const dbs = config.db.dbs;
 const invoicesCollection = dbs.collection("invoices");
@@ -202,4 +203,41 @@ module.exports = {
         }
     },
 
+    async statusUpdate(req, res, next) {
+        try {
+            const { _id, status, deliverydate } = req.body;
+            customOrederCollection.findOne({ _id: ObjectId(_id) })
+                .then(list => {
+                    return customOrederCollection.updateOne(
+                        { _id: ObjectId(list._id) },
+                        { $set: { status: status, deliverydate: deliverydate } },
+                        { upsert: true })
+                })
+                .then((success) => {
+                    res.status(200).json({ 'success': true, msg: "Successfully Updated Status" });
+                })
+                .catch(function (err) {
+                    next(err)
+                });
+        }
+        catch (err) {
+            res.status(500).json({ 'errors': "" + err });
+        }
+    },
+
+
+    async sendCustomOrderEmail(req, res, next) {
+        try {
+            const emailData = req.body
+            //write code here that send email to the client 
+            console.log("================================")
+            console.log(emailData)
+            console.log("================================")
+            mailer.sendCustomOrderToCustomer(emailData);
+            res.status(200).json({ 'success': true, msg: "Successfully Sent Email" });
+        }
+        catch (err) {
+            res.status(500).json({ 'errors': "" + err });
+        }
+    },
 }
