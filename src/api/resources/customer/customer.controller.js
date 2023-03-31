@@ -218,6 +218,28 @@ module.exports = {
     }
   },
 
+  async searchCustomer(req, res, next) {
+    try {
+      const { searchData } = req.body
+      usersCollections
+        .find({ $or: [{ name: searchData }, { email: searchData }] })
+        .toArray()
+        .then((customer) => {
+          if (customer.length) {
+            res.status(200).json({ success: true, data: customer });
+          }
+          else {
+            res.status(200).json({ success: false, msg: "Customer Not Found", });
+          }
+        })
+        .catch((err) => {
+          next(err);
+        });
+    } catch (err) {
+      throw new RequestError("Error");
+    }
+  },
+
   //Api customer update
   async getCustomerUpdate(req, res, next) {
     try {
