@@ -91,8 +91,27 @@ module.exports = {
         }
     },
 
-
-
+    async searchOffer(req, res, next) {
+        try {
+            const { searchData } = req.body;
+            console.log(req.body)
+            offersCollection.find({ $or: [{ name: searchData }, { coupon: searchData }, { discount: searchData }, { leastAmount: searchData }] })
+                .toArray()
+                .then((offer) => {
+                    if (offer.length) {
+                        res.status(200).json({ success: true, data: offer });
+                    }
+                    else {
+                        res.status(200).json({ success: false, msg: "Offer not found" });
+                    }
+                })
+                .catch(function (err) {
+                    next(err);
+                });
+        } catch (err) {
+            throw new RequestError("Error");
+        }
+    },
     async offerUpdate(req, res, next) {
         try {
             const { _id, name, coupon, discount, image, expiresIn, leastAmount } = req.body;

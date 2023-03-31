@@ -270,12 +270,9 @@ module.exports = {
   },
   async getProductListById(req, res, next) {
     try {
-      db.product
-        .findAll({
-          where: { id: req.query.id },
-          include: [{ model: db.productphoto, attributes: ["id", "imgUrl"] }],
-          order: [["createdAt", "DESC"]],
-        })
+      productsCollection
+        .find({ _id: ObjectId(req.query.id) })
+        .toArray()
         .then((list) => {
 
           res.status(200).json({ success: true, data: list });

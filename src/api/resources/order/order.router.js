@@ -1,9 +1,3 @@
-// import express from 'express';
-// import orderController from './order.controller';
-// import { jwtStrategy } from '../../../middleware/strategy';
-// import { sanitize } from '../../../middleware/sanitizer';
-// import { validateBody, schemas } from '../../../middleware/validator';
-
 const express = require("express");
 const orderController = require("./order.controller");
 const { jwtStrategy } = require("../../../middleware/strategy");
@@ -24,8 +18,8 @@ orderRouter.route('/custom/list').get(sanitize(), orderController.getAllcustomOr
 orderRouter.route('/custom/status/update').post(sanitize(), orderController.statusUpdate);
 orderRouter.route('/custom/list').post(sanitize(), orderController.getAllOrderListById);
 orderRouter.route('/custom/email').post(sanitize(), orderController.sendCustomOrderEmail);
-orderRouter.route('/custom/status').post(sanitize(), orderController.getAllOrderStatus);
-orderRouter.route('/custom/count').get(sanitize(), orderController.getAllOrderCount);
+orderRouter.route('/custom/search').post(sanitize(), orderController.searchCustomOrder);
+orderRouter.route('/custom/count').get(sanitize(), orderController.getAllCustomOrderCount);
 
 module.exports = { orderRouter }
 

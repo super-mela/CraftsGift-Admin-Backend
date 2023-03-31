@@ -17,6 +17,7 @@ categoryRouter.route("/customer/getAllSubCategory").get(sanitize(), categoryCont
 
 categoryRouter.route("/create").post(sanitize(), validateBody(schemas.category), jwtStrategy, categoryController.addCategory);
 categoryRouter.route("/update").post(sanitize(), jwtStrategy, categoryController.updateCategory);
+categoryRouter.route("/search").post(sanitize(), categoryController.searchCategory);
 //category list
 categoryRouter.route("/main-list").get(sanitize(), jwtStrategy, categoryController.getMainList);
 categoryRouter.route("/customer/main-list").get(sanitize(), categoryController.getMainList);

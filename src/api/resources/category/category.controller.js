@@ -63,6 +63,26 @@ module.exports = {
     }
   },
 
+  async searchCategory(req, res, next) {
+    try {
+      const { searchData } = req.body;
+      categoriesCollections.find({ $or: [{ categoryName: searchData }, { subCategories: searchData }] })
+        .toArray()
+        .then((category) => {
+          if (category.length) {
+            res.status(200).json({ success: true, data: category });
+          }
+          else {
+            res.status(200).json({ success: false, msg: "Category Not Found" });
+          }
+        })
+        .catch(function (err) {
+          next(err);
+        });
+    } catch (err) {
+      throw new RequestError("Error");
+    }
+  },
 
   async updateCategory(req, res, next) {
     try {

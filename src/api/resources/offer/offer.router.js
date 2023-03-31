@@ -22,6 +22,7 @@ const offerRouter = express.Router();
 offerRouter.route('/create').post(sanitize(), jwtStrategy, offerController.index);
 offerRouter.route('/list').get(sanitize(), jwtStrategy, offerController.getAlloffer);
 offerRouter.route('/update').post(sanitize(), offerController.offerUpdate);
+offerRouter.route('/search').post(sanitize(), offerController.searchOffer);
 offerRouter.route('/delete').delete(sanitize(), offerController.offerDelete);
 
 

@@ -143,13 +143,32 @@ module.exports = {
     },
     async getAllOrderStatus(req, res, next) {
         try {
-            db.Order.findAll({
-                where: { status: req.body.status },
-                order: [['createdAt', 'DESC']],
-                include: [{ model: db.Address, include: [{ model: db.Cart }] }],
+            invoicesCollection.find({
+                $or: [
+                    { status: req.body.searchData },
+                    { firstname: req.body.searchData },
+                    { lastname: req.body.searchData },
+                    { email: req.body.searchData },
+                    { phone: req.body.searchData },
+                    { address: req.body.searchData },
+                    { city: req.body.searchData },
+                    { country: req.body.searchData },
+                    { zip: req.body.searchData },
+                    { shippingOption: req.body.searchData },
+                    { paymentMethod: req.body.searchData },
+                    { amount: req.body.searchData },
+                    { discount: req.body.searchData },
+                    { shippingCost: req.body.searchData },
+                    { invoice: req.body.searchData }]
             })
-                .then(list => {
-                    res.status(200).json({ 'success': true, order: list });
+                .toArray()
+                .then((orders) => {
+                    if (orders.length) {
+                        res.status(200).json({ 'success': true, order: orders });
+                    }
+                    else {
+                        res.status(200).json({ 'success': false, msg: "No Order Found" });
+                    }
                 })
                 .catch(function (err) {
                     next(err)
@@ -159,20 +178,28 @@ module.exports = {
             res.status(500).json({ 'errors': "" + err });
         }
     },
+
+
     async getAllOrderCount(req, res, next) {
-        // invoicesCollection.findAll({
-        //     attributes: ['status', [Sequelize.fn('COUNT', Sequelize.col('status')), 'total']],
-        //     group: ['status']
-        // })
+        const Status = ['pending', "shipping", "delieverd", "cancel"]
         try {
-            dbs.invoices.aggregate([
-                { "$group": { _id: { status: "$status" }, count: { $sum: 1 } } }
-            ]).then(list => {
-                console.log(list)
-                res.status(200).json({ 'success': true, data: list });
-            })
+            invoicesCollection.find()
+                .toArray()
+                .then((orders) => {
+                    if (orders) {
+                        const list = []
+                        Status.map((row) => {
+                            console.log(row)
+                            let eachStatus = orders.filter(data => data.status === row)
+                            let resObj = { status: row, total: eachStatus.length }
+                            list.push(resObj)
+                        })
+                        res.status(200).json({ 'success': true, order: list });
+                    }
+                    res.status(400).json({ 'success': false, msg: "No File Found" });
+
+                })
                 .catch(function (err) {
-                    console.log(err)
                     next(err)
                 });
         }
@@ -240,4 +267,64 @@ module.exports = {
             res.status(500).json({ 'errors': "" + err });
         }
     },
+    async searchCustomOrder(req, res, next) {
+        try {
+            customOrederCollection.find({
+                $or: [
+                    { status: req.body.searchData },
+                    { firstname: req.body.searchData },
+                    { lastname: req.body.searchData },
+                    { email: req.body.searchData },
+                    { phone: req.body.searchData },
+                    { address: req.body.searchData },
+                    { city: req.body.searchData },
+                    { country: req.body.searchData },
+                    { zip: req.body.searchData },
+                    { orderId: req.body.searchData }]
+            })
+                .toArray()
+                .then((orders) => {
+                    if (orders.length) {
+                        res.status(200).json({ 'success': true, order: orders });
+                    }
+                    else {
+                        res.status(200).json({ 'success': false, msg: "No Order Found" });
+                    }
+                })
+                .catch(function (err) {
+                    next(err)
+                });
+        }
+        catch (err) {
+            res.status(500).json({ 'errors': "" + err });
+        }
+    },
+    async getAllCustomOrderCount(req, res, next) {
+        const Status = ['Pending', "shipping", "delieverd", "cancel"]
+        try {
+            customOrederCollection.find()
+                .toArray()
+                .then((orders) => {
+                    if (orders) {
+                        const list = []
+                        Status.map((row) => {
+                            console.log(row)
+                            let eachStatus = orders.filter(data => data.status === row)
+                            let resObj = { status: row, total: eachStatus.length }
+                            list.push(resObj)
+                        })
+                        res.status(200).json({ 'success': true, order: list });
+                    }
+                    res.status(400).json({ 'success': false, msg: "No File Found" });
+
+                })
+                .catch(function (err) {
+                    next(err)
+                });
+        }
+        catch (err) {
+            res.status(500).json({ 'errors': "" + err });
+        }
+    },
+
 }
