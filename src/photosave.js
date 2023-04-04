@@ -480,10 +480,103 @@ var upload_profile = function (req, res) {
   }
 };
 
+var upload_Aboutus_files = function (req, res) {
+  if (req.files) {
+    console.log(req.files)
+    //   const file = req.files.image;
+    //   fs.access(tempFilePath,
+    //     (error) => {
+    //       if (error) {
+    //         fs.mkdir(tempFilePath,
+    //           { recursive: true },
+    //           function (err) {
+    //             if (err) {
+    //             } else {
+    //               if (req.files === null) {
+    //                 return res.status(400).json({ msg: "no file Uploaded" });
+    //               }
+    //               file.mv(`${tempFilePath}/${file.name}`,
+    //                 (err) => {
+    //                   if (err) {
+    //                     console.error(err);
+    //                   }
+    //                   compress_images(tempFilePath + file.name, baseurloffer, options, false,
+    //                     { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+    //                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+    //                     { svg: { engine: "svgo", command: "--multipass" } },
+    //                     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+    //                     , async function (err, completed) {
+    //                       if (err) {
+    //                         console.error(err);
+    //                         res.status(500).send("Error compressing image");
+    //                         return;
+    //                       }
+    //                       if (completed) {
+
+    //                         fs.unlink(tempFilePath + file.name, function (error) {
+    //                           if (error) throw error
+    //                         })
+    //                         console.log("Image compressed successfully!");
+    //                         res(null, {
+    //                           success: true,
+    //                           msg: "Successfully inserted product",
+    //                           url: file.name,
+    //                         });
+
+    //                       }
+    //                     });
+    //                 }
+    //               );
+    //             }
+    //           }
+    //         );
+    //       } else {
+    //         if (
+    //           fs.existsSync(tempFilePath)) {
+    //           file.mv(`${tempFilePath}/${file.name}`,
+    //             (err) => {
+    //               if (err) {
+    //                 console.error(err);
+    //               }
+    //               compress_images(tempFilePath + file.name, baseurloffer, options, false,
+    //                 { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+    //                 { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+    //                 { svg: { engine: "svgo", command: "--multipass" } },
+    //                 { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+    //                 , async function (err, completed) {
+    //                   if (err) {
+    //                     console.error(err);
+    //                     res.status(500).send("Error compressing image");
+    //                     return;
+    //                   }
+    //                   if (completed) {
+
+    //                     fs.unlink(tempFilePath + file.name, function (error) {
+    //                       if (error) throw error
+    //                     })
+    //                     console.log("Image compressed successfully!");
+    //                     res(null, {
+    //                       success: true,
+    //                       msg: "Successfully inserted product",
+    //                       url: file.name,
+    //                     });
+
+    //                   }
+    //                 });
+    //             }
+    //           );
+    //         }
+    //       }
+    //     }
+    //   );
+  }
+};
+
 module.exports = {
   upload_files,
   upload_category_files,
   upload_offer_files,
   upload_customOrder_files,
   upload_profile,
+  upload_Aboutus_files,
 };
