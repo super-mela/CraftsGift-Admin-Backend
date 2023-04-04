@@ -41,8 +41,8 @@ module.exports = {
                             card2: JSON.parse(card2),
                             founders: JSON.parse(founders),
                             date: new Date(),
-                            sideimage: req.files.sideimage ? req.files.sideimage.name : "no image",
-                            bannerimage: req.files.bannerimage ? req.files.bannerimage.name : "no image",
+                            sidefilename: req.files?.sideimage ? req.files.sideimage?.name : "no image",
+                            bannerfilename: req.files?.bannerimage ? req.files.bannerimage?.name : "no image",
                         });
                     }
                     else {
@@ -58,8 +58,8 @@ module.exports = {
                                     card1: JSON.parse(card1),
                                     card2: JSON.parse(card2),
                                     founders: JSON.parse(founders),
-                                    sideimage: req.files.sideimage ? req.files.sideimage.name : sidefilename,
-                                    bannerimage: req.files.bannerimage ? req.files.bannerimage.name : bannerfilename,
+                                    sidefilename: req.files?.sideimage ? req.files.sideimage.name : sidefilename,
+                                    bannerfilename: req.files?.bannerimage ? req.files.bannerimage.name : bannerfilename,
                                 }
                             },
                             { upsert: true }
@@ -97,10 +97,9 @@ module.exports = {
 
     async getAllAboutUs(req, res, next) {
         try {
-            aboutusCollection.find()
-
-                .then((product) => {
-                    res.status(200).json({ success: true, product });
+            aboutusCollection.findOne()
+                .then((aboutus) => {
+                    res.status(200).json({ success: true, aboutus });
                 })
                 .catch(function (err) {
                     next(err);
