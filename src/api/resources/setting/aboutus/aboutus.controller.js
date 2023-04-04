@@ -24,6 +24,8 @@ module.exports = {
                 card1,
                 card2,
                 founders,
+                bannerfilename,
+                sidefilename
             } = req.body;
             aboutusCollection
                 .findOne()
@@ -39,11 +41,31 @@ module.exports = {
                             card2: JSON.parse(card2),
                             founders: JSON.parse(founders),
                             date: new Date(),
-                            sideimage: req.files ? req.files.sideimage.name : "no image",
-                            bannerimage: req.files ? req.files.bannerimage.name : "no image",
+                            sideimage: req.files.sideimage ? req.files.sideimage.name : "no image",
+                            bannerimage: req.files.bannerimage ? req.files.bannerimage.name : "no image",
                         });
                     }
-                    throw new RequestError("Already exist product", 409);
+                    else {
+                        return aboutusCollection.updateOne(
+                            { _id: ObjectId(aboutus._id) },
+                            {
+                                $set: {
+                                    title: title,
+                                    paragraph1: paragraph1,
+                                    paragraph2: paragraph2,
+                                    paragraph3: paragraph3,
+                                    paragraph4: paragraph4,
+                                    card1: JSON.parse(card1),
+                                    card2: JSON.parse(card2),
+                                    founders: JSON.parse(founders),
+                                    sideimage: req.files.sideimage ? req.files.sideimage.name : sidefilename,
+                                    bannerimage: req.files.bannerimage ? req.files.bannerimage.name : bannerfilename,
+                                }
+                            },
+                            { upsert: true }
+                        )
+                    }
+
                 })
                 .then((aboutus) => {
                     if (req.files) {
