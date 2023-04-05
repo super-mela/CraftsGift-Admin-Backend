@@ -1,10 +1,5 @@
-// import { db } from "../../../models";
-// import { queue } from "../../../kue";
-// import config from "../../../config";
-// import AWS from "aws-sdk";
-
 const config = require("../../../../config").data;
-const { upload_Aboutus_files } = require("../../../../photosave");
+const { upload_Aboutus_files, remove_founder } = require("../../../../photosave");
 const { ObjectId } = require("mongodb");
 
 const dbs = config.db.dbs;
@@ -112,54 +107,60 @@ module.exports = {
     async updateAboutUs(req, res, next) {
         try {
             const {
-                productId,
-                category,
-                subCategory,
-                name,
-                discount,
-                net,
-                price,
-                image,
-                tags,
-                desc,
-                status
-            } = req.body;
+                title,
+                paragraph1,
+                paragraph2,
+                paragraph3,
+                paragraph4,
+                card1,
+                card2,
+                founders,
+                bannerfilename,
+                sidefilename,
+                remove
+            } = req.body.data;
             aboutusCollection
-                .findOne({ _id: ObjectId(productId) })
+                .findOne()
                 .then((aboutus) => {
                     if (aboutus) {
                         return aboutusCollection.updateOne(
-                            { _id: ObjectId(product._id) },
+                            { _id: ObjectId(aboutus._id) },
                             {
                                 $set: {
-                                    category: category, subCategory: subCategory, name: name, discount: discount, net: net, price: price, tags: JSON.parse(tags), desc: desc,
-                                    image: req.files ? category + "/" + subCategory + "/" + req.files.image.name : product.image,
-                                    status: status
+                                    title: title,
+                                    paragraph1: paragraph1,
+                                    paragraph2: paragraph2,
+                                    paragraph3: paragraph3,
+                                    paragraph4: paragraph4,
+                                    card1: card1,
+                                    card2: card2,
+                                    founders: founders,
+                                    sidefilename: req.files?.sideimage ? req.files.sideimage.name : sidefilename,
+                                    bannerfilename: req.files?.bannerimage ? req.files.bannerimage.name : bannerfilename,
                                 }
                             },
                             { upsert: true }
                         );
                     }
-                    throw new RequestError("Not Found Product", 409);
+                    throw new RequestError("Not Found About Us", 409);
                 })
                 .then((p) => {
-                    if (req.files) {
-                        upload_Aboutus_files(req, function (err, result) {
+                    if (remove) {
+                        remove_founder(req, function (err, result) {
                             if (err) {
                                 res.send(err);
                             } else {
                                 res.status(200).json({
                                     success: true,
-                                    msg: "Successfully inserted product",
+                                    msg: "Successfully Remove Founder",
                                 });
                             }
                         });
                     } else {
                         res
                             .status(200)
-                            .json({ success: true, msg: "Successfully inserted product" });
+                            .json({ success: false, msg: "No Removed File" });
                     }
-                    // res.status(200).json({ success: true, msg: "Updated Successfully" });
                 })
                 .catch(function (err) {
                     next(err);

@@ -1,12 +1,12 @@
 const fs = require("fs");
 const compress_images = require("compress-images");
 
-var baseurl = __dirname + '/photo/product';
+var baseurl = __dirname + '/photo/product/';
 var baseurlcategory = __dirname + '/photo/category';
-var baseurloffer = __dirname + '/photo/offer';
-var baseurlcustomOrder = __dirname + '/photo/customOrder';
-var baseurlprofile = __dirname + '/photo/profile';
-var baseurlaboutus = __dirname + '/photo/aboutus/';
+var baseurloffer = __dirname + '/photo/offer/';
+var baseurlcustomOrder = __dirname + '/photo/customOrder/';
+var baseurlprofile = __dirname + '/photo/profile/';
+var baseurlaboutus = __dirname + '/photo/aboutus';
 var tempFilePath = `${__dirname}/temp/`;
 const compression = 80
 const options = {
@@ -41,6 +41,7 @@ var upload_files = function (req, res) {
                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                     { svg: { engine: "svgo", command: "--multipass" } },
                     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                    // { webp: { engine: "webp", command: ["-q", compression] } }
                     , async function (err, completed) {
                       if (err) {
                         console.error(err);
@@ -81,6 +82,7 @@ var upload_files = function (req, res) {
                   { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                   { svg: { engine: "svgo", command: "--multipass" } },
                   { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                  // { webp: { engine: "webp", command: ["-q", compression] } }
                   , async function (err, completed) {
                     if (err) {
                       console.error(err);
@@ -137,6 +139,7 @@ var upload_category_files = function (req, res) {
                       { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                       { svg: { engine: "svgo", command: "--multipass" } },
                       { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                      // { webp: { engine: "webp", command: ["-q", compression] } }
                       , async function (err, completed) {
                         if (err) {
                           console.error(err);
@@ -179,6 +182,7 @@ var upload_category_files = function (req, res) {
                   { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                   { svg: { engine: "svgo", command: "--multipass" } },
                   { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                  // { webp: { engine: "webp", command: ["-q", compression] } }
                   , async function (err, completed) {
                     if (err) {
                       console.error(err);
@@ -232,6 +236,7 @@ var upload_offer_files = function (req, res) {
                       { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                       { svg: { engine: "svgo", command: "--multipass" } },
                       { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                      // { webp: { engine: "webp", command: ["-q", compression] } }
                       , async function (err, completed) {
                         if (err) {
                           console.error(err);
@@ -270,6 +275,7 @@ var upload_offer_files = function (req, res) {
                   { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                   { svg: { engine: "svgo", command: "--multipass" } },
                   { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                  // { webp: { engine: "webp", command: ["-q", compression] } }
                   , async function (err, completed) {
                     if (err) {
                       console.error(err);
@@ -305,6 +311,7 @@ var upload_customOrder_files = function (req, res) {
     fs.access(tempFilePath,
       (error) => {
         if (error) {
+          b
           fs.mkdir(tempFilePath,
             { recursive: true },
             function (err) {
@@ -323,6 +330,7 @@ var upload_customOrder_files = function (req, res) {
                       { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                       { svg: { engine: "svgo", command: "--multipass" } },
                       { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                      // { webp: { engine: "webp", command: ["-q", compression] } }
                       , async function (err, completed) {
                         if (err) {
                           console.error(err);
@@ -357,10 +365,11 @@ var upload_customOrder_files = function (req, res) {
                   console.error(err);
                 }
                 compress_images(tempFilePath + file.name, baseurlcustomOrder, options, false,
-                  { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                  { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
                   { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                   { svg: { engine: "svgo", command: "--multipass" } },
                   { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                  // { webp: { engine: "webp", command: ["-q", compression] } }
                   , async function (err, completed) {
                     if (err) {
                       console.error(err);
@@ -414,6 +423,7 @@ var upload_profile = function (req, res) {
                       { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                       { svg: { engine: "svgo", command: "--multipass" } },
                       { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                      // { webp: { engine: "webp", command: ["-q", compression] } }
                       , async function (err, completed) {
                         if (err) {
                           console.error(err);
@@ -452,6 +462,7 @@ var upload_profile = function (req, res) {
                   { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                   { svg: { engine: "svgo", command: "--multipass" } },
                   { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                  // { webp: { engine: "webp", command: ["-q", compression] } }
                   , async function (err, completed) {
                     if (err) {
                       console.error(err);
@@ -506,6 +517,7 @@ var upload_Aboutus_files = function (req, res) {
                         { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                         { svg: { engine: "svgo", command: "--multipass" } },
                         { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                        // { webp: { engine: "webp", command: ["-q", compression] } }
                         , async function (err, completed) {
                           if (err) {
                             console.error(err);
@@ -538,6 +550,7 @@ var upload_Aboutus_files = function (req, res) {
                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                     { svg: { engine: "svgo", command: "--multipass" } },
                     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                    // { webp: { engine: "webp", command: ["-q", compression] } }
                     , async function (err, completed) {
                       if (err) {
                         console.error(err);
@@ -581,6 +594,7 @@ var upload_Aboutus_files = function (req, res) {
                       { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                       { svg: { engine: "svgo", command: "--multipass" } },
                       { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                      // { webp: { engine: "webp", command: ["-q", compression] } }
                       , async function (err, completed) {
                         if (err) {
                           console.error(err);
@@ -613,6 +627,7 @@ var upload_Aboutus_files = function (req, res) {
                   { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                   { svg: { engine: "svgo", command: "--multipass" } },
                   { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                  // { webp: { engine: "webp", command: ["-q", compression] } }
                   , async function (err, completed) {
                     if (err) {
                       console.error(err);
@@ -620,7 +635,6 @@ var upload_Aboutus_files = function (req, res) {
                       return;
                     }
                     if (completed) {
-
                       fs.unlink(tempFilePath + file.name, function (error) {
                         if (error) throw error
                       })
@@ -657,6 +671,7 @@ var upload_Aboutus_files = function (req, res) {
                           { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                           { svg: { engine: "svgo", command: "--multipass" } },
                           { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                          // { webp: { engine: "webp", command: ["-q", compression] } }
                           , async function (err, completed) {
                             if (err) {
                               console.error(err);
@@ -689,6 +704,7 @@ var upload_Aboutus_files = function (req, res) {
                       { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                       { svg: { engine: "svgo", command: "--multipass" } },
                       { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                      // { webp: { engine: "webp", command: ["-q", compression] } }
                       , async function (err, completed) {
                         if (err) {
                           console.error(err);
@@ -718,6 +734,20 @@ var upload_Aboutus_files = function (req, res) {
   });
 };
 
+var remove_founder = function (req, res) {
+  const { remove } = req.body.data
+  if (remove) {
+    fs.unlink(baseurlaboutus + "founders/" + remove.founderfilename, function (error) {
+      if (error) throw error
+    })
+    res(null, {
+      success: true,
+      msg: "Successfully Remove Founder",
+
+    });
+  }
+};
+
 module.exports = {
   upload_files,
   upload_category_files,
@@ -725,4 +755,5 @@ module.exports = {
   upload_customOrder_files,
   upload_profile,
   upload_Aboutus_files,
+  remove_founder,
 };
