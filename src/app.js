@@ -1,15 +1,3 @@
-// import express from 'express';
-// import logger from 'morgan';
-// import path from 'path';
-// import passport from 'passport';
-// import session from 'express-session';
-// import bodyParser from 'body-parser';
-// import cookieParser from 'cookie-parser';
-// import expressSanitizer from 'express-sanitizer';
-// import helmet from 'helmet';
-// import rfs from 'rotating-file-stream';
-// import './passport';
-
 const express = require("express");
 const logger = require("morgan");
 const path = require("path");
@@ -42,6 +30,7 @@ module.exports = {
         app.use("/customorder", express.static(path.join(__dirname, 'photo/customOrder/')));
         app.use("/profile", express.static(path.join(__dirname, 'photo/profile/')));
         app.use("/aboutus", express.static(path.join(__dirname, 'photo/aboutus/')));
+        app.use("/bannerimage", express.static(path.join(__dirname, 'photo/banner/')));
         app.use("/multiImages", express.static(path.join(__dirname, 'photo/product/MultiImages')));
         app.use(passport.initialize());
         app.use(passport.session());

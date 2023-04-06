@@ -7,6 +7,7 @@ var baseurloffer = __dirname + '/photo/offer/';
 var baseurlcustomOrder = __dirname + '/photo/customOrder/';
 var baseurlprofile = __dirname + '/photo/profile/';
 var baseurlaboutus = __dirname + '/photo/aboutus';
+var baseurlbanner = __dirname + '/photo/banner/';
 var tempFilePath = `${__dirname}/temp/`;
 const compression = 80
 const options = {
@@ -748,6 +749,99 @@ var remove_founder = function (req, res) {
   }
 };
 
+var upload_banner_files = function (req, res) {
+  if (req.files) {
+    const file = req.files.bannerimage;
+    fs.access(tempFilePath,
+      (error) => {
+        if (error) {
+          fs.mkdir(tempFilePath,
+            { recursive: true },
+            function (err) {
+              if (err) {
+              } else {
+                if (req.files === null) {
+                  return res.status(400).json({ msg: "no file Uploaded" });
+                }
+                file.mv(`${tempFilePath}/${file.name}`,
+                  (err) => {
+                    if (err) {
+                      console.error(err);
+                    }
+                    compress_images(tempFilePath + file.name, baseurlbanner, options, false,
+                      { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                      { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                      { svg: { engine: "svgo", command: "--multipass" } },
+                      { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                      // { webp: { engine: "webp", command: ["-q", compression] } }
+                      , async function (err, completed) {
+                        if (err) {
+                          console.error(err);
+                          res.status(500).send("Error compressing image");
+                          return;
+                        }
+                        if (completed) {
+
+                          fs.unlink(tempFilePath + file.name, function (error) {
+                            if (error) throw error
+                          })
+                          console.log("Image compressed successfully!");
+                          res(null, {
+                            success: true,
+                            msg: "Successfully inserted banner",
+                            url: file.name,
+                          });
+
+                        }
+                      });
+                  }
+                );
+              }
+            }
+          );
+        } else {
+          if (
+            fs.existsSync(tempFilePath)) {
+            file.mv(`${tempFilePath}/${file.name}`,
+              (err) => {
+                if (err) {
+                  console.error(err);
+                }
+                compress_images(tempFilePath + file.name, baseurlbanner, options, false,
+                  { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                  { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                  { svg: { engine: "svgo", command: "--multipass" } },
+                  { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                  // { webp: { engine: "webp", command: ["-q", compression] } }
+                  , async function (err, completed) {
+                    if (err) {
+                      console.error(err);
+                      res.status(500).send("Error compressing image");
+                      return;
+                    }
+                    if (completed) {
+
+                      fs.unlink(tempFilePath + file.name, function (error) {
+                        if (error) throw error
+                      })
+                      console.log("Image compressed successfully!");
+                      res(null, {
+                        success: true,
+                        msg: "Successfully inserted Banner",
+                        url: file.name,
+                      });
+
+                    }
+                  });
+              }
+            );
+          }
+        }
+      }
+    );
+  }
+};
+
 module.exports = {
   upload_files,
   upload_category_files,
@@ -756,4 +850,5 @@ module.exports = {
   upload_profile,
   upload_Aboutus_files,
   remove_founder,
+  upload_banner_files,
 };
