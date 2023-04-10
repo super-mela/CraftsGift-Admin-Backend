@@ -1,13 +1,15 @@
 const fs = require("fs");
 const compress_images = require("compress-images");
+const sharp = require('sharp');
 
 var baseurl = __dirname + '/photo/product/';
 var baseurlcategory = __dirname + '/photo/category';
 var baseurloffer = __dirname + '/photo/offer/';
 var baseurlcustomOrder = __dirname + '/photo/customOrder/';
 var baseurlprofile = __dirname + '/photo/profile/';
-var baseurlaboutus = __dirname + '/photo/aboutus';
+var baseurlaboutus = __dirname + '/photo/aboutus/';
 var baseurlbanner = __dirname + '/photo/banner/';
+var baseurlslider = __dirname + '/photo/slider/';
 var tempFilePath = `${__dirname}/temp/`;
 const compression = 80
 const options = {
@@ -37,6 +39,78 @@ var upload_files = function (req, res) {
                     console.error(err);
                     return res.status(500).send(err);
                   }
+                  if (file.name.split(".")[1] === "webp") {
+                    sharp(tempFilePath + file.name)
+                      .webp({ quality: compression })
+                      .toFile(outFilePath + file.name, (err, info) => {
+                        if (err) {
+                          console.log(err);
+                        } else {
+                          fs.unlink(tempFilePath + file.name, function (error) {
+                            if (error) throw error
+                          })
+                          console.log("Image compressed successfully!");
+                        }
+                      });
+                  }
+                  else {
+                    compress_images(tempFilePath + file.name, outFilePath, options, false,
+                      { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                      { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                      { svg: { engine: "svgo", command: "--multipass" } },
+                      { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                      // { webp: { engine: "webp", command: ["-q", compression] } }
+                      , async function (err, completed) {
+                        if (err) {
+                          console.error(err);
+                          res.status(500).send("Error compressing image");
+                          return;
+                        }
+                        if (completed) {
+
+                          fs.unlink(tempFilePath + file.name, function (error) {
+                            if (error) throw error
+                          })
+                          console.log("Image compressed successfully!");
+                          res(null, {
+                            success: true,
+                            msg: "Successfully inserted product",
+                            url: file.name,
+                          });
+
+                        }
+                      });
+                  }
+                }
+                );
+                console.log(" directory successfully created.", baseurl);
+              }
+            }
+          );
+        } else {
+          if (
+            fs.existsSync(tempFilePath)) {
+            file.mv(`${tempFilePath}${file.name}`,
+              (err) => {
+                if (err) {
+                  console.error(err);
+                  return res.status(500).send(err);
+                }
+                if (file.name.split(".")[1] === "webp") {
+                  sharp(tempFilePath + file.name)
+                    .webp({ quality: compression })
+                    .toFile(outFilePath + file.name, (err, info) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                      }
+                    });
+                }
+                else {
                   compress_images(tempFilePath + file.name, outFilePath, options, false,
                     { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
@@ -60,49 +134,9 @@ var upload_files = function (req, res) {
                           msg: "Successfully inserted product",
                           url: file.name,
                         });
-
                       }
                     });
                 }
-                );
-                console.log(" directory successfully created.", baseurl);
-              }
-            }
-          );
-        } else {
-          if (
-            fs.existsSync(tempFilePath)) {
-            file.mv(`${tempFilePath}${file.name}`,
-              (err) => {
-                if (err) {
-                  console.error(err);
-                  return res.status(500).send(err);
-                }
-                compress_images(tempFilePath + file.name, outFilePath, options, false,
-                  { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                  { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                  { svg: { engine: "svgo", command: "--multipass" } },
-                  { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                  // { webp: { engine: "webp", command: ["-q", compression] } }
-                  , async function (err, completed) {
-                    if (err) {
-                      console.error(err);
-                      res.status(500).send("Error compressing image");
-                      return;
-                    }
-                    if (completed) {
-
-                      fs.unlink(tempFilePath + file.name, function (error) {
-                        if (error) throw error
-                      })
-                      console.log("Image compressed successfully!");
-                      res(null, {
-                        success: true,
-                        msg: "Successfully inserted product",
-                        url: file.name,
-                      });
-                    }
-                  });
               }
             );
           }
@@ -135,35 +169,50 @@ var upload_category_files = function (req, res) {
                     if (err) {
                       console.error(err);
                     }
-                    compress_images(tempFilePath + file.name, outFilePath, options, false,
-                      { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                      { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                      { svg: { engine: "svgo", command: "--multipass" } },
-                      { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                      // { webp: { engine: "webp", command: ["-q", compression] } }
-                      , async function (err, completed) {
-                        if (err) {
-                          console.error(err);
-                          res.status(500).send("Error compressing image");
-                          return;
-                        }
-                        if (completed) {
+                    if (file.name.split(".")[1] === "webp") {
+                      sharp(tempFilePath + file.name)
+                        .webp({ quality: compression })
+                        .toFile(outFilePath + file.name, (err, info) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                          }
+                        });
+                    }
+                    else {
+                      compress_images(tempFilePath + file.name, outFilePath, options, false,
+                        { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                        { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                        { svg: { engine: "svgo", command: "--multipass" } },
+                        { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                        // { webp: { engine: "webp", command: ["-q", compression] } }
+                        , async function (err, completed) {
+                          if (err) {
+                            console.error(err);
+                            res.status(500).send("Error compressing image");
+                            return;
+                          }
+                          if (completed) {
 
-                          fs.unlink(tempFilePath + file.name, function (error) {
-                            if (error) throw error
-                          })
-                          console.log("Image compressed successfully!");
-                          res(null, {
-                            success: true,
-                            msg: "Successfully inserted product",
-                            url: file.name,
-                          });
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                            res(null, {
+                              success: true,
+                              msg: "Successfully inserted product",
+                              url: file.name,
+                            });
 
-                        }
-                      });
+                          }
+                        });
+                    }
                   }
                 );
-
                 console.log(" directory successfully created.", baseurlcategory);
               }
             }
@@ -178,32 +227,48 @@ var upload_category_files = function (req, res) {
                   console.error(err);
                   //   return res.status(500).send(err);
                 }
-                compress_images(tempFilePath + file.name, outFilePath, options, false,
-                  { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                  { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                  { svg: { engine: "svgo", command: "--multipass" } },
-                  { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                  // { webp: { engine: "webp", command: ["-q", compression] } }
-                  , async function (err, completed) {
-                    if (err) {
-                      console.error(err);
-                      res.status(500).send("Error compressing image");
-                      return;
-                    }
-                    if (completed) {
+                if (file.name.split(".")[1] === "webp") {
+                  sharp(tempFilePath + file.name)
+                    .webp({ quality: compression })
+                    .toFile(outFilePath + file.name, (err, info) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                      }
+                    });
+                }
+                else {
+                  compress_images(tempFilePath + file.name, outFilePath, options, false,
+                    { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                    { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                    { svg: { engine: "svgo", command: "--multipass" } },
+                    { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                    // { webp: { engine: "webp", command: ["-q", compression] } }
+                    , async function (err, completed) {
+                      if (err) {
+                        console.error(err);
+                        res.status(500).send("Error compressing image");
+                        return;
+                      }
+                      if (completed) {
 
-                      fs.unlink(tempFilePath + file.name, function (error) {
-                        if (error) throw error
-                      })
-                      console.log("Image compressed successfully!");
-                      res(null, {
-                        success: true,
-                        msg: "Successfully inserted product",
-                        url: file.name,
-                      });
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                        res(null, {
+                          success: true,
+                          msg: "Successfully inserted product",
+                          url: file.name,
+                        });
 
-                    }
-                  });
+                      }
+                    });
+                }
               }
             );
           }
@@ -232,32 +297,48 @@ var upload_offer_files = function (req, res) {
                     if (err) {
                       console.error(err);
                     }
-                    compress_images(tempFilePath + file.name, baseurloffer, options, false,
-                      { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                      { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                      { svg: { engine: "svgo", command: "--multipass" } },
-                      { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                      // { webp: { engine: "webp", command: ["-q", compression] } }
-                      , async function (err, completed) {
-                        if (err) {
-                          console.error(err);
-                          res.status(500).send("Error compressing image");
-                          return;
-                        }
-                        if (completed) {
+                    if (file.name.split(".")[1] === "webp") {
+                      sharp(tempFilePath + file.name)
+                        .webp({ quality: compression })
+                        .toFile(baseurloffer + file.name, (err, info) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                          }
+                        });
+                    }
+                    else {
+                      compress_images(tempFilePath + file.name, baseurloffer, options, false,
+                        { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                        { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                        { svg: { engine: "svgo", command: "--multipass" } },
+                        { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                        // { webp: { engine: "webp", command: ["-q", compression] } }
+                        , async function (err, completed) {
+                          if (err) {
+                            console.error(err);
+                            res.status(500).send("Error compressing image");
+                            return;
+                          }
+                          if (completed) {
 
-                          fs.unlink(tempFilePath + file.name, function (error) {
-                            if (error) throw error
-                          })
-                          console.log("Image compressed successfully!");
-                          res(null, {
-                            success: true,
-                            msg: "Successfully inserted product",
-                            url: file.name,
-                          });
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                            res(null, {
+                              success: true,
+                              msg: "Successfully inserted product",
+                              url: file.name,
+                            });
 
-                        }
-                      });
+                          }
+                        });
+                    }
                   }
                 );
               }
@@ -271,32 +352,48 @@ var upload_offer_files = function (req, res) {
                 if (err) {
                   console.error(err);
                 }
-                compress_images(tempFilePath + file.name, baseurloffer, options, false,
-                  { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                  { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                  { svg: { engine: "svgo", command: "--multipass" } },
-                  { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                  // { webp: { engine: "webp", command: ["-q", compression] } }
-                  , async function (err, completed) {
-                    if (err) {
-                      console.error(err);
-                      res.status(500).send("Error compressing image");
-                      return;
-                    }
-                    if (completed) {
+                if (file.name.split(".")[1] === "webp") {
+                  sharp(tempFilePath + file.name)
+                    .webp({ quality: compression })
+                    .toFile(baseurloffer + file.name, (err, info) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                      }
+                    });
+                }
+                else {
+                  compress_images(tempFilePath + file.name, baseurloffer, options, false,
+                    { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                    { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                    { svg: { engine: "svgo", command: "--multipass" } },
+                    { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                    // { webp: { engine: "webp", command: ["-q", compression] } }
+                    , async function (err, completed) {
+                      if (err) {
+                        console.error(err);
+                        res.status(500).send("Error compressing image");
+                        return;
+                      }
+                      if (completed) {
 
-                      fs.unlink(tempFilePath + file.name, function (error) {
-                        if (error) throw error
-                      })
-                      console.log("Image compressed successfully!");
-                      res(null, {
-                        success: true,
-                        msg: "Successfully inserted product",
-                        url: file.name,
-                      });
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                        res(null, {
+                          success: true,
+                          msg: "Successfully inserted product",
+                          url: file.name,
+                        });
 
-                    }
-                  });
+                      }
+                    });
+                }
               }
             );
           }
@@ -326,32 +423,47 @@ var upload_customOrder_files = function (req, res) {
                     if (err) {
                       console.error(err);
                     }
-                    compress_images(tempFilePath + file.name, baseurlcustomOrder, options, false,
-                      { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                      { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                      { svg: { engine: "svgo", command: "--multipass" } },
-                      { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                      // { webp: { engine: "webp", command: ["-q", compression] } }
-                      , async function (err, completed) {
-                        if (err) {
-                          console.error(err);
-                          res.status(500).send("Error compressing image");
-                          return;
-                        }
-                        if (completed) {
+                    if (file.name.split(".")[1] === "webp") {
+                      sharp(tempFilePath + file.name)
+                        .webp({ quality: compression })
+                        .toFile(baseurlcustomOrder + file.name, (err, info) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                          }
+                        });
+                    }
+                    else {
+                      compress_images(tempFilePath + file.name, baseurlcustomOrder, options, false,
+                        { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                        { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                        { svg: { engine: "svgo", command: "--multipass" } },
+                        { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                        // { webp: { engine: "webp", command: ["-q", compression] } }
+                        , async function (err, completed) {
+                          if (err) {
+                            console.error(err);
+                            res.status(500).send("Error compressing image");
+                            return;
+                          }
+                          if (completed) {
 
-                          fs.unlink(tempFilePath + file.name, function (error) {
-                            if (error) throw error
-                          })
-                          console.log("Image compressed successfully!");
-                          res(null, {
-                            success: true,
-                            msg: "Successfully inserted product",
-                            url: file.name,
-                          });
-
-                        }
-                      });
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                            res(null, {
+                              success: true,
+                              msg: "Successfully inserted product",
+                              url: file.name,
+                            });
+                          }
+                        });
+                    }
                   }
                 );
               }
@@ -365,32 +477,48 @@ var upload_customOrder_files = function (req, res) {
                 if (err) {
                   console.error(err);
                 }
-                compress_images(tempFilePath + file.name, baseurlcustomOrder, options, false,
-                  { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
-                  { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                  { svg: { engine: "svgo", command: "--multipass" } },
-                  { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                  // { webp: { engine: "webp", command: ["-q", compression] } }
-                  , async function (err, completed) {
-                    if (err) {
-                      console.error(err);
-                      res.status(500).send("Error compressing image");
-                      return;
-                    }
-                    if (completed) {
+                if (file.name.split(".")[1] === "webp") {
+                  sharp(tempFilePath + file.name)
+                    .webp({ quality: compression })
+                    .toFile(baseurlcustomOrder + file.name, (err, info) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                      }
+                    });
+                }
+                else {
+                  compress_images(tempFilePath + file.name, baseurlcustomOrder, options, false,
+                    { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
+                    { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                    { svg: { engine: "svgo", command: "--multipass" } },
+                    { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                    // { webp: { engine: "webp", command: ["-q", compression] } }
+                    , async function (err, completed) {
+                      if (err) {
+                        console.error(err);
+                        res.status(500).send("Error compressing image");
+                        return;
+                      }
+                      if (completed) {
 
-                      fs.unlink(tempFilePath + file.name, function (error) {
-                        if (error) throw error
-                      })
-                      console.log("Image compressed successfully!");
-                      res(null, {
-                        success: true,
-                        msg: "Successfully inserted product",
-                        url: file.name,
-                      });
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                        res(null, {
+                          success: true,
+                          msg: "Successfully inserted product",
+                          url: file.name,
+                        });
 
-                    }
-                  });
+                      }
+                    });
+                }
               }
             );
           }
@@ -419,32 +547,47 @@ var upload_profile = function (req, res) {
                     if (err) {
                       console.error(err);
                     }
-                    compress_images(tempFilePath + file.name, baseurlprofile, options, false,
-                      { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                      { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                      { svg: { engine: "svgo", command: "--multipass" } },
-                      { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                      // { webp: { engine: "webp", command: ["-q", compression] } }
-                      , async function (err, completed) {
-                        if (err) {
-                          console.error(err);
-                          res.status(500).send("Error compressing image");
-                          return;
-                        }
-                        if (completed) {
+                    if (file.name.split(".")[1] === "webp") {
+                      sharp(tempFilePath + file.name)
+                        .webp({ quality: compression })
+                        .toFile(baseurlprofile + file.name, (err, info) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                          }
+                        });
+                    }
+                    else {
+                      compress_images(tempFilePath + file.name, baseurlprofile, options, false,
+                        { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                        { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                        { svg: { engine: "svgo", command: "--multipass" } },
+                        { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                        // { webp: { engine: "webp", command: ["-q", compression] } }
+                        , async function (err, completed) {
+                          if (err) {
+                            console.error(err);
+                            res.status(500).send("Error compressing image");
+                            return;
+                          }
+                          if (completed) {
 
-                          fs.unlink(tempFilePath + file.name, function (error) {
-                            if (error) throw error
-                          })
-                          console.log("Image compressed successfully!");
-                          res(null, {
-                            success: true,
-                            msg: "Successfully inserted product",
-                            url: file.name,
-                          });
-
-                        }
-                      });
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                            res(null, {
+                              success: true,
+                              msg: "Successfully inserted product",
+                              url: file.name,
+                            });
+                          }
+                        });
+                    }
                   }
                 );
               }
@@ -458,32 +601,48 @@ var upload_profile = function (req, res) {
                 if (err) {
                   console.error(err);
                 }
-                compress_images(tempFilePath + file.name, baseurlprofile, options, false,
-                  { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                  { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                  { svg: { engine: "svgo", command: "--multipass" } },
-                  { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                  // { webp: { engine: "webp", command: ["-q", compression] } }
-                  , async function (err, completed) {
-                    if (err) {
-                      console.error(err);
-                      res.status(500).send("Error compressing image");
-                      return;
-                    }
-                    if (completed) {
+                if (file.name.split(".")[1] === "webp") {
+                  sharp(tempFilePath + file.name)
+                    .webp({ quality: compression })
+                    .toFile(baseurlprofile + file.name, (err, info) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                      }
+                    });
+                }
+                else {
+                  compress_images(tempFilePath + file.name, baseurlprofile, options, false,
+                    { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                    { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                    { svg: { engine: "svgo", command: "--multipass" } },
+                    { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                    // { webp: { engine: "webp", command: ["-q", compression] } }
+                    , async function (err, completed) {
+                      if (err) {
+                        console.error(err);
+                        res.status(500).send("Error compressing image");
+                        return;
+                      }
+                      if (completed) {
 
-                      fs.unlink(tempFilePath + file.name, function (error) {
-                        if (error) throw error
-                      })
-                      console.log("Image compressed successfully!");
-                      res(null, {
-                        success: true,
-                        msg: "Successfully inserted product",
-                        url: file.name,
-                      });
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                        res(null, {
+                          success: true,
+                          msg: "Successfully inserted product",
+                          url: file.name,
+                        });
 
-                    }
-                  });
+                      }
+                    });
+                }
               }
             );
           }
@@ -507,32 +666,46 @@ var upload_Aboutus_files = function (req, res) {
                 if (err) {
                   console.log(err)
                 } else {
-
                   file.mv(`${tempFilePath}/${file.name}`,
                     (err) => {
                       if (err) {
                         console.error(err);
                       }
-                      compress_images(tempFilePath + file.name, baseurlaboutus, options, false,
-                        { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                        { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                        { svg: { engine: "svgo", command: "--multipass" } },
-                        { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                        // { webp: { engine: "webp", command: ["-q", compression] } }
-                        , async function (err, completed) {
-                          if (err) {
-                            console.error(err);
-                            res.status(500).send("Error compressing image");
-                            return;
-                          }
-                          if (completed) {
+                      if (file.name.split(".")[1] === "webp") {
+                        sharp(tempFilePath + file.name)
+                          .webp({ quality: compression })
+                          .toFile(baseurlaboutus + "founders/" + file.name, (err, info) => {
+                            if (err) {
+                              console.log(err);
+                            } else {
+                              fs.unlink(tempFilePath + file.name, function (error) {
+                                if (error) throw error
+                              })
+                              console.log("Image compressed successfully!");
+                            }
+                          });
+                      }
+                      else {
+                        compress_images(tempFilePath + file.name, baseurlaboutus, options, false,
+                          { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                          { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                          { svg: { engine: "svgo", command: "--multipass" } },
+                          { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                          , async function (err, completed) {
+                            if (err) {
+                              console.error(err);
+                              res.status(500).send("Error compressing image");
+                              return;
+                            }
+                            if (completed) {
 
-                            fs.unlink(tempFilePath + file.name, function (error) {
-                              if (error) throw error
-                            })
-                            console.log("Image compressed successfully!");
-                          }
-                        });
+                              fs.unlink(tempFilePath + file.name, function (error) {
+                                if (error) throw error
+                              })
+                              console.log("Image compressed successfully!");
+                            }
+                          });
+                      }
                     }
                   );
                 }
@@ -546,26 +719,41 @@ var upload_Aboutus_files = function (req, res) {
                   if (err) {
                     console.error(err);
                   }
-                  compress_images(tempFilePath + file.name, baseurlaboutus, options, false,
-                    { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                    { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                    { svg: { engine: "svgo", command: "--multipass" } },
-                    { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                    // { webp: { engine: "webp", command: ["-q", compression] } }
-                    , async function (err, completed) {
-                      if (err) {
-                        console.error(err);
-                        res.status(500).send("Error compressing image");
-                        return;
-                      }
-                      if (completed) {
+                  if (file.name.split(".")[1] === "webp") {
+                    sharp(tempFilePath + file.name)
+                      .webp({ quality: compression })
+                      .toFile(baseurlaboutus + "founders/" + file.name, (err, info) => {
+                        if (err) {
+                          console.log(err);
+                        } else {
+                          fs.unlink(tempFilePath + file.name, function (error) {
+                            if (error) throw error
+                          })
+                          console.log("Image compressed successfully!");
+                        }
+                      });
+                  }
+                  else {
+                    compress_images(tempFilePath + file.name, baseurlaboutus, options, false,
+                      { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                      { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                      { svg: { engine: "svgo", command: "--multipass" } },
+                      { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                      , async function (err, completed) {
+                        if (err) {
+                          console.error(err);
+                          res.status(500).send("Error compressing image");
+                          return;
+                        }
+                        if (completed) {
 
-                        fs.unlink(tempFilePath + file.name, function (error) {
-                          if (error) throw error
-                        })
-                        console.log("Image compressed successfully!");
-                      }
-                    });
+                          fs.unlink(tempFilePath + file.name, function (error) {
+                            if (error) throw error
+                          })
+                          console.log("Image compressed successfully!");
+                        }
+                      });
+                  }
                 }
               );
             }
@@ -590,26 +778,41 @@ var upload_Aboutus_files = function (req, res) {
                     if (err) {
                       console.error(err);
                     }
-                    compress_images(tempFilePath + file.name, baseurlaboutus, options, false,
-                      { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                      { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                      { svg: { engine: "svgo", command: "--multipass" } },
-                      { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                      // { webp: { engine: "webp", command: ["-q", compression] } }
-                      , async function (err, completed) {
-                        if (err) {
-                          console.error(err);
-                          res.status(500).send("Error compressing image");
-                          return;
-                        }
-                        if (completed) {
+                    if (file.name.split(".")[1] === "webp") {
+                      sharp(tempFilePath + file.name)
+                        .webp({ quality: compression })
+                        .toFile(baseurlaboutus + "founders/" + file.name, (err, info) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                          }
+                        });
+                    }
+                    else {
+                      compress_images(tempFilePath + file.name, baseurlaboutus, options, false,
+                        { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                        { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                        { svg: { engine: "svgo", command: "--multipass" } },
+                        { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                        , async function (err, completed) {
+                          if (err) {
+                            console.error(err);
+                            res.status(500).send("Error compressing image");
+                            return;
+                          }
+                          if (completed) {
 
-                          fs.unlink(tempFilePath + file.name, function (error) {
-                            if (error) throw error
-                          })
-                          console.log("Image compressed successfully!");
-                        }
-                      });
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                          }
+                        });
+                    }
                   }
                 );
               }
@@ -623,25 +826,40 @@ var upload_Aboutus_files = function (req, res) {
                 if (err) {
                   console.error(err);
                 }
-                compress_images(tempFilePath + file.name, baseurlaboutus, options, false,
-                  { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                  { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                  { svg: { engine: "svgo", command: "--multipass" } },
-                  { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                  // { webp: { engine: "webp", command: ["-q", compression] } }
-                  , async function (err, completed) {
-                    if (err) {
-                      console.error(err);
-                      res.status(500).send("Error compressing image");
-                      return;
-                    }
-                    if (completed) {
-                      fs.unlink(tempFilePath + file.name, function (error) {
-                        if (error) throw error
-                      })
-                      console.log("Image compressed successfully!");
-                    }
-                  });
+                if (file.name.split(".")[1] === "webp") {
+                  sharp(tempFilePath + file.name)
+                    .webp({ quality: compression })
+                    .toFile(baseurlaboutus + "founders/" + file.name, (err, info) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                      }
+                    });
+                }
+                else {
+                  compress_images(tempFilePath + file.name, baseurlaboutus, options, false,
+                    { jpg: { engine: "mozjpeg + webp", command: ["-quality", compression] } },
+                    { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                    { svg: { engine: "svgo", command: "--multipass" } },
+                    { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                    , async function (err, completed) {
+                      if (err) {
+                        console.error(err);
+                        res.status(500).send("Error compressing image");
+                        return;
+                      }
+                      if (completed) {
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                      }
+                    });
+                }
               }
             );
           }
@@ -667,26 +885,42 @@ var upload_Aboutus_files = function (req, res) {
                         if (err) {
                           console.error(err);
                         }
-                        compress_images(tempFilePath + file.name, baseurlaboutus + "founders/", options, false,
-                          { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                          { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                          { svg: { engine: "svgo", command: "--multipass" } },
-                          { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                          // { webp: { engine: "webp", command: ["-q", compression] } }
-                          , async function (err, completed) {
-                            if (err) {
-                              console.error(err);
-                              res.status(500).send("Error compressing image");
-                              return;
-                            }
-                            if (completed) {
+                        if (file.name.splice(".")[1] === "webp") {
+                          sharp(tempFilePath + file.name)
+                            .webp({ quality: compression })
+                            .toFile(baseurlaboutus + "founders/" + file.name, (err, info) => {
+                              if (err) {
+                                console.log(err);
+                              } else {
 
-                              fs.unlink(tempFilePath + file.name, function (error) {
-                                if (error) throw error
-                              })
-                              console.log("Image compressed successfully!");
-                            }
-                          });
+                                fs.unlink(tempFilePath + file.name, function (error) {
+                                  if (error) throw error
+                                })
+                                console.log("Image compressed successfully!");
+                              }
+                            });
+                        }
+                        else {
+                          compress_images(tempFilePath + file.name, baseurlaboutus + "founders/", options, false,
+                            { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
+                            { png: { engine: "pngquant + webp", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                            { svg: { engine: "svgo", command: "--multipass" } },
+                            { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                            , async function (err, completed) {
+                              if (err) {
+                                console.error(err);
+                                res.status(500).send("Error compressing image");
+                                return;
+                              }
+                              if (completed) {
+
+                                fs.unlink(tempFilePath + file.name, function (error) {
+                                  if (error) throw error
+                                })
+                                console.log("Image compressed successfully!");
+                              }
+                            });
+                        }
                       }
                     );
                   }
@@ -700,26 +934,41 @@ var upload_Aboutus_files = function (req, res) {
                     if (err) {
                       console.error(err);
                     }
-                    compress_images(tempFilePath + file.name, baseurlaboutus + "founders/", options, false,
-                      { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                      { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                      { svg: { engine: "svgo", command: "--multipass" } },
-                      { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                      // { webp: { engine: "webp", command: ["-q", compression] } }
-                      , async function (err, completed) {
-                        if (err) {
-                          console.error(err);
-                          res.status(500).send("Error compressing image");
-                          return;
-                        }
-                        if (completed) {
+                    if (file.name.split(".")[1] === "webp") {
+                      sharp(tempFilePath + file.name)
+                        .webp({ quality: compression })
+                        .toFile(baseurlaboutus + "founders/" + file.name, (err, info) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                          }
+                        });
+                    }
+                    else {
+                      compress_images(tempFilePath + file.name, baseurlaboutus + "founders/", options, false,
+                        { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
+                        { png: { engine: "pngquant + webp", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                        { svg: { engine: "svgo", command: "--multipass" } },
+                        { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                        , async function (err, completed) {
+                          if (err) {
+                            console.error(err);
+                            res.status(500).send("Error compressing image");
+                            return;
+                          }
+                          if (completed) {
 
-                          fs.unlink(tempFilePath + file.name, function (error) {
-                            if (error) throw error
-                          })
-                          console.log("Image compressed successfully!");
-                        }
-                      });
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                          }
+                        });
+                    }
                   }
                 );
               }
@@ -768,32 +1017,48 @@ var upload_banner_files = function (req, res) {
                     if (err) {
                       console.error(err);
                     }
-                    compress_images(tempFilePath + file.name, baseurlbanner, options, false,
-                      { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                      { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                      { svg: { engine: "svgo", command: "--multipass" } },
-                      { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                      // { webp: { engine: "webp", command: ["-q", compression] } }
-                      , async function (err, completed) {
-                        if (err) {
-                          console.error(err);
-                          res.status(500).send("Error compressing image");
-                          return;
-                        }
-                        if (completed) {
+                    if (file.name.split(".")[1] === "webp") {
+                      sharp(tempFilePath + file.name)
+                        .webp({ quality: compression })
+                        .toFile(baseurlbanner + file.name, (err, info) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                          }
+                        });
+                    }
+                    else {
+                      compress_images(tempFilePath + file.name, baseurlbanner, options, false,
+                        { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                        { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                        { svg: { engine: "svgo", command: "--multipass" } },
+                        { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                        // { webp: { engine: "webp", command: ["-q", compression] } }
+                        , async function (err, completed) {
+                          if (err) {
+                            console.error(err);
+                            res.status(500).send("Error compressing image");
+                            return;
+                          }
+                          if (completed) {
 
-                          fs.unlink(tempFilePath + file.name, function (error) {
-                            if (error) throw error
-                          })
-                          console.log("Image compressed successfully!");
-                          res(null, {
-                            success: true,
-                            msg: "Successfully inserted banner",
-                            url: file.name,
-                          });
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                              if (error) throw error
+                            })
+                            console.log("Image compressed successfully!");
+                            res(null, {
+                              success: true,
+                              msg: "Successfully inserted banner",
+                              url: file.name,
+                            });
 
-                        }
-                      });
+                          }
+                        });
+                    }
                   }
                 );
               }
@@ -807,38 +1072,188 @@ var upload_banner_files = function (req, res) {
                 if (err) {
                   console.error(err);
                 }
-                compress_images(tempFilePath + file.name, baseurlbanner, options, false,
-                  { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
-                  { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
-                  { svg: { engine: "svgo", command: "--multipass" } },
-                  { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                  // { webp: { engine: "webp", command: ["-q", compression] } }
-                  , async function (err, completed) {
-                    if (err) {
-                      console.error(err);
-                      res.status(500).send("Error compressing image");
-                      return;
-                    }
-                    if (completed) {
+                if (file.name.split(".")[1] === "webp") {
+                  sharp(tempFilePath + file.name)
+                    .webp({ quality: compression })
+                    .toFile(baseurlbanner + file.name, (err, info) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                      }
+                    });
+                }
+                else {
+                  compress_images(tempFilePath + file.name, baseurlbanner, options, false,
+                    { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                    { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                    { svg: { engine: "svgo", command: "--multipass" } },
+                    { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                    // { webp: { engine: "webp", command: ["-q", compression] } }
+                    , async function (err, completed) {
+                      if (err) {
+                        console.error(err);
+                        res.status(500).send("Error compressing image");
+                        return;
+                      }
+                      if (completed) {
 
-                      fs.unlink(tempFilePath + file.name, function (error) {
-                        if (error) throw error
-                      })
-                      console.log("Image compressed successfully!");
-                      res(null, {
-                        success: true,
-                        msg: "Successfully inserted Banner",
-                        url: file.name,
-                      });
+                        fs.unlink(tempFilePath + file.name, function (error) {
+                          if (error) throw error
+                        })
+                        console.log("Image compressed successfully!");
+                        res(null, {
+                          success: true,
+                          msg: "Successfully inserted Banner",
+                          url: file.name,
+                        });
 
-                    }
-                  });
+                      }
+                    });
+                }
               }
             );
           }
         }
       }
     );
+  }
+};
+
+var upload_sliders_files = function (req, res) {
+  const sliders = JSON.parse(req.body.sliders)
+  if (req.files) {
+    if (sliders.length) {
+      for (var row of sliders) {
+        if (req.files[row.sliderfilename]) {
+          const file = req.files[row.sliderfilename];
+          fs.access(tempFilePath,
+            (error) => {
+              if (error) {
+                fs.mkdir(tempFilePath,
+                  { recursive: true },
+                  function (err) {
+                    if (err) {
+                      console.log(err)
+                    } else {
+                      file.mv(`${tempFilePath}/${file.name}`,
+                        (err) => {
+                          if (err) {
+                            console.error(err);
+                          }
+                          if (file.name.splice(".")[1] === "webp") {
+                            sharp(tempFilePath + file.name)
+                              .webp({ quality: compression })
+                              .toFile(baseurlslider + file.name, (err, info) => {
+                                if (err) {
+                                  console.log(err);
+                                } else {
+
+                                  fs.unlink(tempFilePath + file.name, function (error) {
+                                    if (error) throw error
+                                  })
+                                  console.log("Image compressed successfully!");
+                                }
+                              });
+                          }
+                          else {
+                            compress_images(tempFilePath + file.name, baseurlslider, options, false,
+                              { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
+                              { png: { engine: "pngquant ", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                              { svg: { engine: "svgo", command: "--multipass" } },
+                              { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                              , async function (err, completed) {
+                                if (err) {
+                                  console.error(err);
+                                  res.status(500).send("Error compressing image");
+                                  return;
+                                }
+                                if (completed) {
+
+                                  fs.unlink(tempFilePath + file.name, function (error) {
+                                    if (error) throw error
+                                  })
+                                  console.log("Image compressed successfully!");
+                                }
+                              });
+                          }
+                        }
+                      );
+                    }
+                  }
+                );
+              } else {
+                if (
+                  fs.existsSync(tempFilePath)) {
+                  file.mv(`${tempFilePath}/${file.name}`,
+                    (err) => {
+                      if (err) {
+                        console.error(err);
+                      }
+                      if (file.name.split(".")[1] === "webp") {
+                        sharp(tempFilePath + file.name)
+                          .webp({ quality: compression })
+                          .toFile(baseurlslider + file.name, (err, info) => {
+                            if (err) {
+                              console.log(err);
+                            } else {
+                              fs.unlink(tempFilePath + file.name, function (error) {
+                                if (error) throw error
+                              })
+                              console.log("Image compressed successfully!");
+                            }
+                          });
+                      }
+                      else {
+                        compress_images(tempFilePath + file.name, baseurlslider, options, false,
+                          { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
+                          { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                          { svg: { engine: "svgo", command: "--multipass" } },
+                          { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
+                          , async function (err, completed) {
+                            if (err) {
+                              console.error(err);
+                              res.status(500).send("Error compressing image");
+                              return;
+                            }
+                            if (completed) {
+                              fs.unlink(tempFilePath + file.name, function (error) {
+                                if (error) throw error
+                              })
+                              console.log("Image compressed successfully!");
+                            }
+                          });
+                      }
+                    }
+                  );
+                }
+              }
+            }
+          );
+        }
+      }
+    }
+  }
+  res(null, {
+    success: true,
+    msg: "Successfully inserted product",
+  });
+};
+
+var remove_slider = function (req, res) {
+  const { remove } = req.body.data
+  if (remove) {
+    fs.unlink(baseurlslider + remove.sliderfilename, function (error) {
+      if (error) throw error
+    })
+    res(null, {
+      success: true,
+      msg: "Successfully Remove Founder",
+
+    });
   }
 };
 
@@ -851,4 +1266,6 @@ module.exports = {
   upload_Aboutus_files,
   remove_founder,
   upload_banner_files,
+  upload_sliders_files,
+  remove_slider,
 };
