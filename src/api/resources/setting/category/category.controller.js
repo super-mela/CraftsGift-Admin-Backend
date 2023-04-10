@@ -57,8 +57,8 @@ module.exports = {
     async getAllCatAdvert(req, res, next) {
         try {
             catAdvertCollection.findOne()
-                .then((aboutus) => {
-                    res.status(200).json({ success: true, aboutus });
+                .then((catadvert) => {
+                    res.status(200).json({ success: true, catadvert });
                 })
                 .catch(function (err) {
                     next(err);

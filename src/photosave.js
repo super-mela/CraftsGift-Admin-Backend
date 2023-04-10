@@ -60,7 +60,6 @@ var upload_files = function (req, res) {
                       { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                       { svg: { engine: "svgo", command: "--multipass" } },
                       { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                      // { webp: { engine: "webp", command: ["-q", compression] } }
                       , async function (err, completed) {
                         if (err) {
                           console.error(err);
@@ -117,7 +116,6 @@ var upload_files = function (req, res) {
                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                     { svg: { engine: "svgo", command: "--multipass" } },
                     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                    // { webp: { engine: "webp", command: ["-q", compression] } }
                     , async function (err, completed) {
                       if (err) {
                         console.error(err);
@@ -190,7 +188,6 @@ var upload_category_files = function (req, res) {
                         { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                         { svg: { engine: "svgo", command: "--multipass" } },
                         { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                        // { webp: { engine: "webp", command: ["-q", compression] } }
                         , async function (err, completed) {
                           if (err) {
                             console.error(err);
@@ -226,7 +223,6 @@ var upload_category_files = function (req, res) {
               (err) => {
                 if (err) {
                   console.error(err);
-                  //   return res.status(500).send(err);
                 }
                 if (file.name.split(".")[1] === "webp") {
                   sharp(tempFilePath + file.name)
@@ -248,7 +244,6 @@ var upload_category_files = function (req, res) {
                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                     { svg: { engine: "svgo", command: "--multipass" } },
                     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                    // { webp: { engine: "webp", command: ["-q", compression] } }
                     , async function (err, completed) {
                       if (err) {
                         console.error(err);
@@ -318,7 +313,6 @@ var upload_offer_files = function (req, res) {
                         { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                         { svg: { engine: "svgo", command: "--multipass" } },
                         { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                        // { webp: { engine: "webp", command: ["-q", compression] } }
                         , async function (err, completed) {
                           if (err) {
                             console.error(err);
@@ -373,7 +367,6 @@ var upload_offer_files = function (req, res) {
                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                     { svg: { engine: "svgo", command: "--multipass" } },
                     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                    // { webp: { engine: "webp", command: ["-q", compression] } }
                     , async function (err, completed) {
                       if (err) {
                         console.error(err);
@@ -444,7 +437,6 @@ var upload_customOrder_files = function (req, res) {
                         { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                         { svg: { engine: "svgo", command: "--multipass" } },
                         { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                        // { webp: { engine: "webp", command: ["-q", compression] } }
                         , async function (err, completed) {
                           if (err) {
                             console.error(err);
@@ -494,11 +486,10 @@ var upload_customOrder_files = function (req, res) {
                 }
                 else {
                   compress_images(tempFilePath + file.name, baseurlcustomOrder, options, false,
-                    { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
+                    { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                     { svg: { engine: "svgo", command: "--multipass" } },
                     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                    // { webp: { engine: "webp", command: ["-q", compression] } }
                     , async function (err, completed) {
                       if (err) {
                         console.error(err);
@@ -568,7 +559,6 @@ var upload_profile = function (req, res) {
                         { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                         { svg: { engine: "svgo", command: "--multipass" } },
                         { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                        // { webp: { engine: "webp", command: ["-q", compression] } }
                         , async function (err, completed) {
                           if (err) {
                             console.error(err);
@@ -622,7 +612,6 @@ var upload_profile = function (req, res) {
                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                     { svg: { engine: "svgo", command: "--multipass" } },
                     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                    // { webp: { engine: "webp", command: ["-q", compression] } }
                     , async function (err, completed) {
                       if (err) {
                         console.error(err);
@@ -843,7 +832,7 @@ var upload_Aboutus_files = function (req, res) {
                 }
                 else {
                   compress_images(tempFilePath + file.name, baseurlaboutus, options, false,
-                    { jpg: { engine: "mozjpeg + webp", command: ["-quality", compression] } },
+                    { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                     { svg: { engine: "svgo", command: "--multipass" } },
                     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
@@ -903,8 +892,8 @@ var upload_Aboutus_files = function (req, res) {
                         }
                         else {
                           compress_images(tempFilePath + file.name, baseurlaboutus + "founders/", options, false,
-                            { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
-                            { png: { engine: "pngquant + webp", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                            { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                            { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                             { svg: { engine: "svgo", command: "--multipass" } },
                             { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
                             , async function (err, completed) {
@@ -951,8 +940,8 @@ var upload_Aboutus_files = function (req, res) {
                     }
                     else {
                       compress_images(tempFilePath + file.name, baseurlaboutus + "founders/", options, false,
-                        { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
-                        { png: { engine: "pngquant + webp", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                        { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                        { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                         { svg: { engine: "svgo", command: "--multipass" } },
                         { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
                         , async function (err, completed) {
@@ -1038,7 +1027,6 @@ var upload_banner_files = function (req, res) {
                         { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                         { svg: { engine: "svgo", command: "--multipass" } },
                         { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                        // { webp: { engine: "webp", command: ["-q", compression] } }
                         , async function (err, completed) {
                           if (err) {
                             console.error(err);
@@ -1093,7 +1081,6 @@ var upload_banner_files = function (req, res) {
                     { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                     { svg: { engine: "svgo", command: "--multipass" } },
                     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
-                    // { webp: { engine: "webp", command: ["-q", compression] } }
                     , async function (err, completed) {
                       if (err) {
                         console.error(err);
@@ -1162,8 +1149,8 @@ var upload_sliders_files = function (req, res) {
                           }
                           else {
                             compress_images(tempFilePath + file.name, baseurlslider, options, false,
-                              { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
-                              { png: { engine: "pngquant ", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                              { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                              { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                               { svg: { engine: "svgo", command: "--multipass" } },
                               { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
                               , async function (err, completed) {
@@ -1210,7 +1197,7 @@ var upload_sliders_files = function (req, res) {
                       }
                       else {
                         compress_images(tempFilePath + file.name, baseurlslider, options, false,
-                          { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
+                          { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
                           { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                           { svg: { engine: "svgo", command: "--multipass" } },
                           { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
@@ -1296,8 +1283,8 @@ var upload_catadverts_files = function (req, res) {
                           }
                           else {
                             compress_images(tempFilePath + file.name, baseurlcatAdvert, options, false,
-                              { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
-                              { png: { engine: "pngquant ", command: ["--quality=" + compression + "-" + compression, "-o"] } },
+                              { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
+                              { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                               { svg: { engine: "svgo", command: "--multipass" } },
                               { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
                               , async function (err, completed) {
@@ -1344,7 +1331,7 @@ var upload_catadverts_files = function (req, res) {
                       }
                       else {
                         compress_images(tempFilePath + file.name, baseurlcatAdvert, options, false,
-                          { jpg: { engine: "mozjpeg ", command: ["-quality", compression] } },
+                          { jpg: { engine: "mozjpeg", command: ["-quality", compression] } },
                           { png: { engine: "pngquant", command: ["--quality=" + compression + "-" + compression, "-o"] } },
                           { svg: { engine: "svgo", command: "--multipass" } },
                           { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } }
