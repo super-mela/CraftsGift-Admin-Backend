@@ -8,6 +8,7 @@ var baseurlcustomOrder = __dirname + '/photo/customOrder/';
 var baseurlprofile = __dirname + '/photo/profile/';
 var baseurlaboutus = __dirname + '/photo/aboutus/';
 var baseurlbanner = __dirname + '/photo/banner/';
+var baseurladvertbanner = __dirname + '/photo/advertbanner/';
 var baseurlslider = __dirname + '/photo/slider/';
 var baseurlcatAdvert = __dirname + '/photo/categoryAdvert/';
 var tempFilePath = `${__dirname}/temp/`;
@@ -37,7 +38,6 @@ var upload_files = function (req, res) {
                     if (err) {
                       res.send(err);
                     } else {
-                      console.log(result)
                       res(null, result);
                     }
                   });
@@ -60,7 +60,6 @@ var upload_files = function (req, res) {
                   if (err) {
                     res.send(err);
                   } else {
-                    console.log(result)
                     res(null, result);
                   }
                 });
@@ -100,7 +99,6 @@ var upload_category_files = function (req, res) {
                       if (err) {
                         res.send(err);
                       } else {
-                        console.log(result)
                         res(null, result);
                       }
                     });
@@ -124,7 +122,6 @@ var upload_category_files = function (req, res) {
                   if (err) {
                     res.send(err);
                   } else {
-                    console.log(result)
                     res(null, result);
                   }
                 });
@@ -160,7 +157,6 @@ var upload_offer_files = function (req, res) {
                       if (err) {
                         res.send(err);
                       } else {
-                        console.log(result)
                         res(null, result);
                       }
                     });
@@ -181,7 +177,6 @@ var upload_offer_files = function (req, res) {
                   if (err) {
                     res.send(err);
                   } else {
-                    console.log(result)
                     res(null, result);
                   }
                 });
@@ -218,7 +213,6 @@ var upload_customOrder_files = function (req, res) {
                       if (err) {
                         res.send(err);
                       } else {
-                        console.log(result)
                         res(null, result);
                       }
                     });
@@ -240,7 +234,6 @@ var upload_customOrder_files = function (req, res) {
                   if (err) {
                     res.send(err);
                   } else {
-                    console.log(result)
                     res(null, result);
                   }
                 });
@@ -276,7 +269,6 @@ var upload_profile = function (req, res) {
                       if (err) {
                         res.send(err);
                       } else {
-                        console.log(result)
                         res(null, result);
                       }
                     });
@@ -297,7 +289,6 @@ var upload_profile = function (req, res) {
                   if (err) {
                     res.send(err);
                   } else {
-                    console.log(result)
                     res(null, result);
                   }
                 });
@@ -333,7 +324,6 @@ var upload_Aboutus_files = function (req, res) {
                         if (err) {
                           res.send(err);
                         } else {
-                          console.log(result)
                           res(null, result);
                         }
                       });
@@ -355,7 +345,6 @@ var upload_Aboutus_files = function (req, res) {
                     if (err) {
                       res.send(err);
                     } else {
-                      console.log(result)
                       res(null, result);
                     }
                   });
@@ -387,7 +376,6 @@ var upload_Aboutus_files = function (req, res) {
                       if (err) {
                         res.send(err);
                       } else {
-                        console.log(result)
                         res(null, result);
                       }
                     });
@@ -409,7 +397,6 @@ var upload_Aboutus_files = function (req, res) {
                   if (err) {
                     res.send(err);
                   } else {
-                    console.log(result)
                     res(null, result);
                   }
                 });
@@ -442,7 +429,6 @@ var upload_Aboutus_files = function (req, res) {
                           if (err) {
                             res.send(err);
                           } else {
-                            console.log(result)
                             res(null, result);
                           }
                         });
@@ -463,7 +449,6 @@ var upload_Aboutus_files = function (req, res) {
                       if (err) {
                         res.send(err);
                       } else {
-                        console.log(result)
                         res(null, result);
                       }
                     });
@@ -515,7 +500,6 @@ var upload_banner_files = function (req, res) {
                       if (err) {
                         res.send(err);
                       } else {
-                        console.log(result)
                         res(null, result);
                       }
                     });
@@ -536,7 +520,61 @@ var upload_banner_files = function (req, res) {
                   if (err) {
                     res.send(err);
                   } else {
-                    console.log(result)
+                    res(null, result);
+                  }
+                });
+              }
+            );
+          }
+        }
+      }
+    );
+  }
+};
+
+var upload_advertbanner_files = function (req, res) {
+  if (req.files) {
+    const file = req.files.advertbannerimage;
+    fs.access(tempFilePath,
+      (error) => {
+        if (error) {
+          fs.mkdir(tempFilePath,
+            { recursive: true },
+            function (err) {
+              if (err) {
+              } else {
+                if (req.files === null) {
+                  return res.status(400).json({ msg: "no file Uploaded" });
+                }
+                file.mv(`${tempFilePath}/${file.name}`,
+                  (err) => {
+                    if (err) {
+                      console.error(err);
+                    }
+                    image_Compression(file, baseurladvertbanner, function (err, result) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res(null, result);
+                      }
+                    });
+                  }
+                );
+              }
+            }
+          );
+        } else {
+          if (
+            fs.existsSync(tempFilePath)) {
+            file.mv(`${tempFilePath}/${file.name}`,
+              (err) => {
+                if (err) {
+                  console.error(err);
+                }
+                image_Compression(file, baseurladvertbanner, function (err, result) {
+                  if (err) {
+                    res.send(err);
+                  } else {
                     res(null, result);
                   }
                 });
@@ -575,7 +613,6 @@ var upload_sliders_files = function (req, res) {
                             if (err) {
                               res.send(err);
                             } else {
-                              console.log(result)
                               res(null, result);
                             }
                           });
@@ -651,7 +688,6 @@ var upload_catadverts_files = function (req, res) {
                             if (err) {
                               res.send(err);
                             } else {
-                              console.log(result)
                               res(null, result);
                             }
                           });
@@ -672,7 +708,6 @@ var upload_catadverts_files = function (req, res) {
                         if (err) {
                           res.send(err);
                         } else {
-                          console.log(result)
                           res(null, result);
                         }
                       });
@@ -714,5 +749,6 @@ module.exports = {
   upload_sliders_files,
   remove_slider,
   upload_catadverts_files,
-  remove_catadverts
+  remove_catadverts,
+  upload_advertbanner_files,
 };

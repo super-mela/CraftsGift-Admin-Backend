@@ -32,6 +32,7 @@ module.exports = {
         app.use("/profile", express.static(path.join(__dirname, 'photo/profile/')));
         app.use("/aboutus", express.static(path.join(__dirname, 'photo/aboutus/')));
         app.use("/bannerimage", express.static(path.join(__dirname, 'photo/banner/')));
+        app.use("/advertbanner", express.static(path.join(__dirname, 'photo/advertbanner/')));
         app.use("/slider", express.static(path.join(__dirname, 'photo/slider/')));
         app.use("/catadvert", express.static(path.join(__dirname, 'photo/categoryAdvert/')));
         app.use("/multiImages", express.static(path.join(__dirname, 'photo/product/MultiImages')));

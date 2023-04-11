@@ -1,5 +1,4 @@
 const { db } = require("../../../models");
-const { queue } = require("../../../kue");
 const config = require("../../../config").data;
 const AWS = require("aws-sdk");
 const { Op } = require("sequelize");
