@@ -1,8 +1,3 @@
-// import { db } from "../../../models";
-// import { queue } from "../../../kue";
-// import config from "../../../config";
-// import AWS from "aws-sdk";
-
 const { db } = require("../../../models");
 const { queue } = require("../../../kue");
 const config = require("../../../config").data;
