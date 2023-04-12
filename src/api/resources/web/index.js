@@ -29,7 +29,13 @@ async function run() {
         const invoicesCollection = db.collection("invoices");
         const offersCollection = db.collection("offers");
         const wishlistCollection = db.collection("wishlist");
-        const customOrederCollection = db.collection("customOrder")
+        const customOrederCollection = db.collection("customOrder");
+        const aboutusCollection = db.collection("aboutus");
+        const advertbannerCollection = db.collection("advertBanner");
+        const bannerCollection = db.collection("bannerImage");
+        const catAdvertCollection = db.collection("categoryAdvert");
+        const shippingCollection = db.collection("shippingtype");
+        const slidersCollection = db.collection("sliders");
 
         /* ************** APIs ********************* */
 
@@ -806,7 +812,91 @@ async function run() {
                 res.status(500).json({ 'errors': "" + err });
             }
         });
-        /* ================================== */
+        /* ================Setting Api================== */
+        web.get("/setting/aboutus", async (req, res) => {
+            try {
+                aboutusCollection.findOne()
+                    .then((aboutus) => {
+                        res.status(200).json(aboutus);
+                    })
+                    .catch(function (err) {
+                        next(err);
+                    });
+            } catch (error) {
+                console.log(error);
+                res.status(400).json("Server Error");
+            }
+        });
+        web.get("/setting/advertbanner", async (req, res) => {
+            try {
+                advertbannerCollection.findOne()
+                    .then((advertbanner) => {
+                        res.status(200).json(advertbanner);
+                    })
+                    .catch(function (err) {
+                        next(err);
+                    });
+            } catch (error) {
+                console.log(error);
+                res.status(400).json("Server Error");
+            }
+        });
+        web.get("/setting/banner", async (req, res) => {
+            try {
+                bannerCollection.findOne()
+                    .then((banner) => {
+                        res.status(200).json(banner);
+                    })
+                    .catch(function (err) {
+                        next(err);
+                    });
+            } catch (error) {
+                console.log(error);
+                res.status(400).json("Server Error");
+            }
+        });
+        web.get("/setting/category", async (req, res) => {
+            try {
+                catAdvertCollection.findOne()
+                    .then((category) => {
+                        res.status(200).json(category);
+                    })
+                    .catch(function (err) {
+                        next(err);
+                    });
+            } catch (error) {
+                console.log(error);
+                res.status(400).json("Server Error");
+            }
+        });
+        web.get("/setting/shipping", async (req, res) => {
+            try {
+                shippingCollection.findOne()
+                    .then((shipping) => {
+                        res.status(200).json(shipping);
+                    })
+                    .catch(function (err) {
+                        next(err);
+                    });
+            } catch (error) {
+                console.log(error);
+                res.status(400).json("Server Error");
+            }
+        });
+        web.get("/setting/slider", async (req, res) => {
+            try {
+                slidersCollection.findOne()
+                    .then((slider) => {
+                        res.status(200).json(slider);
+                    })
+                    .catch(function (err) {
+                        next(err);
+                    });
+            } catch (error) {
+                console.log(error);
+                res.status(400).json("Server Error");
+            }
+        });
         /* ================================== */
         /* ================================== */
         /* ================================== */
