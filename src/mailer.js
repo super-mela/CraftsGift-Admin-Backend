@@ -187,6 +187,52 @@ module.exports = {
             }
         });
 
+    },
+    sendToCustomer: (emaildata) => {
+        return new Promise((resolve, reject) => {
+            try {
+                const { email, fullname, subject, message } = emaildata
+                usersCollections.findOne({ email: email })
+                    .then((user) => {
+                        if (user) {
+                            var smtpTransport = nodemailer.createTransport({
+                                service: 'gmail',
+                                auth: {
+                                    user: process.env.MAIL_USERNAME,
+                                    pass: process.env.MAIL_PASSWORD
+                                },
+                                tls: { rejectUnauthorized: false },
+                            });
+                            smtpTransport.sendMail({
+                                from: process.env.MAIL_FROM,
+                                to: process.env.MAIL_TO,
+                                subject: 'Crafts Gift Customer Custom Order Description',
+                                html: `<h1>Dear user ${fullname}</h1>` + `<br/><h3> ${subject}</h3>` + "<br><br> " + message + "<br><br><br><br> Craft Gift",
+                            }, function (error, info) {
+                                if (error) {
+
+                                    return reject({
+                                        name: "ProductException",
+                                        msg: 'Email Sending Failed'
+                                    })
+                                } else {
+                                    return resolve(true)
+                                }
+
+                            });
+                        } else throw {
+                            name: "ProductException",
+                            msg: 'Email Body not available'
+                        }
+                    })
+                    .catch((error) => {
+                        reject(error)
+                    })
+            } catch (err) {
+                reject(err);
+            }
+        });
+
     }
 }
 

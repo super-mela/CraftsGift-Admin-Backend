@@ -21,6 +21,7 @@ customerRouter.route('/list').get(sanitize(), customerController.getAllCustomer)
 customerRouter.route('/update').post(sanitize(), customerController.getCustomerUpdate);
 customerRouter.route('/delete').delete(sanitize(), customerController.deleteCustomer);
 customerRouter.route('/search').post(sanitize(), customerController.searchCustomer);
+customerRouter.route('/email').post(sanitize(), customerController.sendCustomerEmail);
 customerRouter.route('/updateProfileImage').post(sanitize(), customerController.updateProfileImage);
 customerRouter.route('/sendImage').post(sanitize(), customerController.sendImage);
 

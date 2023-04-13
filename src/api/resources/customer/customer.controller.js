@@ -218,6 +218,20 @@ module.exports = {
     }
   },
 
+  //Api to Send Email
+  async sendCustomerEmail(req, res, next) {
+    try {
+      const emailData = req.body
+      //write code here that send email to the client 
+      console.log("================================")
+      console.log(emailData)
+      console.log("================================")
+      mailer.sendToCustomer(emailData);
+      res.status(200).json({ 'success': true, msg: "Successfully Sent Email" });
+    } catch (err) {
+      throw new RequestError("Error");
+    }
+  },
   async searchCustomer(req, res, next) {
     try {
       const { searchData } = req.body
