@@ -125,7 +125,37 @@ module.exports = {
             throw new RequestError('Error');
         }
     },
-
+    async searchPayment(req, res, next) {
+        try {
+            const { data } = req.body
+            invoicesCollection.find({
+                $or: [
+                    { status: data },
+                    { firstname: data },
+                    { lastname: data },
+                    { invoice: data },
+                    { amount: data },
+                    { paymentMethod: data },
+                    { status: data },
+                ]
+            })
+                .toArray()
+                .then((payment) => {
+                    if (payment.length) {
+                        res.status(200).json({ 'success': true, payment: payment });
+                    }
+                    else {
+                        res.status(200).json({ 'success': false, msg: "No Invoice Found" });
+                    }
+                })
+                .catch(function (err) {
+                    next(err)
+                });
+        }
+        catch (err) {
+            res.status(500).json({ 'errors': "" + err });
+        }
+    },
 
 }
 
