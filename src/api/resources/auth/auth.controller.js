@@ -5,6 +5,8 @@ const config = require("../../../config").data;
 const JWT = require("jsonwebtoken");
 const bcrypt = require("bcrypt-nodejs");
 const speakeasy = require("speakeasy");
+const { ObjectId } = require("mongodb");
+
 const run = require("../../index")
 const { validateEmail } = require("./../../../functions")
 
@@ -44,9 +46,8 @@ function verifyOtp(token) {
 }
 
 
-
 /* ******* Collections **************** */
-const usersCollections = dbs.collection(" adminusers");
+const usersCollections = dbs.collection("adminusers");
 
 
 // const dbs = client.db("Crafts")
@@ -165,6 +166,36 @@ module.exports = {
             .json({ success: true, msg: "User update successsfully" });
         } else res.status(500).json({ success: false });
       })
+      .catch((err) => {
+        console.log(err);
+        next(err);
+      });
+  },
+
+
+  async userChangePassword(req, res, next) {
+    const { oldpassword, password } = req.body;
+    var passwordHash = bcrypt.hashSync(password);
+    var isMatch = bcrypt.compareSync(oldpassword, req.user.password);
+    usersCollections.findOne({ email: req.user.email })
+      .then((user) => {
+        if (!user || !isMatch) {
+          throw new RequestError("User is not found", 409);
+        }
+        return usersCollections.updateOne(
+          { _id: ObjectId(user._id) },
+          { $set: { password: passwordHash } },
+          { upsert: true }
+        );
+      })
+      .then((user) => {
+        if (user) {
+          return res
+            .status(200)
+            .json({ success: true, msg: "User update successsfully" });
+        } else res.status(500).json({ success: false });
+      }
+      )
       .catch((err) => {
         console.log(err);
         next(err);

@@ -1,7 +1,3 @@
-// import passport from "passport";
-// import JWT from "jsonwebtoken";
-// import config from "../config";
-
 const passport = require("passport");
 const JWT = require("jsonwebtoken")
 const config = require("../config").data;
