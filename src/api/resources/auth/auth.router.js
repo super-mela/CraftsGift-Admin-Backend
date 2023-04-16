@@ -14,6 +14,7 @@ authRouter.route("/user/update").post(sanitize(), jwtStrategy, authController.us
 authRouter.route("/user/delete").post(sanitize(), jwtStrategy, authController.deleteUserList);
 authRouter.route("/user/changepassword").post(sanitize(), jwtStrategy, authController.userChangePassword);
 authRouter.route("/getUserByEmailId").get(sanitize(), authController.findUser);
+authRouter.route("/user/getUserByToken").get(sanitize(), jwtStrategy, authController.getUser);
 authRouter.route("/rootLogin").post(sanitize(), validateBody(schemas.loginSchema), localStrategy, authController.login);
 
 module.exports = { authRouter }

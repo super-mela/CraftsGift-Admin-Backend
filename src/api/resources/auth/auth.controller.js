@@ -50,8 +50,6 @@ function verifyOtp(token) {
 const usersCollections = dbs.collection("adminusers");
 
 
-// const dbs = client.db("Crafts")
-
 module.exports = {
   async addUser(req, res, next) {
     const {
@@ -123,6 +121,14 @@ module.exports = {
       });
   },
 
+  async getUser(req, res, next) {
+    console.log(req.user)
+    if (req.user) {
+      return res.status(200).json({ success: true, data: req.user });
+    } else res.status(500).json({ success: false });
+  },
+
+
   async getAllUserList(req, res, next) {
     db.user
       .findAll()
@@ -138,25 +144,26 @@ module.exports = {
   },
 
   async userUpdate(req, res, next) {
-    const { id, firstName, lastName, email, address, password, role, verify } =
-      req.body;
-    var passwordHash = bcrypt.hashSync(password);
-    db.user
-      .findOne({ where: { email: email }, paranoid: false })
+    const { _id, firstName, lastName, address, phoneNo } = req.body;
+    usersCollections
+      .findOne({ _id: ObjectId(_id) })
       .then((user) => {
         if (!user) {
           throw new RequestError("User is not found", 409);
         }
-        return db.user.update(
+        return usersCollections.updateOne(
+          { _id: ObjectId(user._id) },
           {
-            firstName: firstName ? firstName : user.firstName,
-            lastName: lastName ? lastName : user.lastName,
-            password: password ? passwordHash : user.passwordHash,
-            address: address ? address : user.address,
-            role: role ? role : user.role,
-            verify: verify ? verify : user.verify,
+            $set: {
+              firstName: firstName ? firstName : user.firstName,
+              lastName: lastName ? lastName : user.lastName,
+              phoneNo: phoneNo ? phoneNo : user.phoneNo,
+              address: address ? address : user.address,
+              email: user.email,
+            }
           },
-          { where: { id: id } }
+          { upsert: true }
+
         );
       })
       .then((user) => {
