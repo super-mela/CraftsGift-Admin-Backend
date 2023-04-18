@@ -1,14 +1,12 @@
 require('dotenv').config();
-// const { db } = require("./models");
 var fileupload = require("express-fileupload");
 const path = require("path");
 const cors = require("cors")
 const { restRouter } = require("./api");
 const config = require("./config").data
 const appManager = require("./app")
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+
 require("./errors")
-const scheduler = require("./scheduler");
 
 global.appRoot = path.resolve(__dirname);
 
@@ -30,8 +28,6 @@ app.use(fileupload());
 /* Route handling */
 app.use("/api", restRouter);
 // app.use('/', webRouter);
-
-
 
 app.use((req, res, next) => {
   next(new RequestError("Invalid route", 404));

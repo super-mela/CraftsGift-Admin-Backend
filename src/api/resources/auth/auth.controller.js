@@ -1,5 +1,3 @@
-// const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const { db } = require("../../../models");
 const mailer = require("../../../mailer");
 const config = require("../../../config").data;
 const JWT = require("jsonwebtoken");
@@ -7,8 +5,6 @@ const bcrypt = require("bcrypt-nodejs");
 const speakeasy = require("speakeasy");
 const { ObjectId } = require("mongodb");
 
-const run = require("../../index")
-const { validateEmail } = require("./../../../functions")
 
 const dbs = config.db.dbs;
 
@@ -104,12 +100,8 @@ module.exports = {
   },
 
   async findUser(req, res, next) {
-    db.user
-      .findOne({
-        attributes: ["firstName", "lastName"],
-        where: { email: req.query.email },
-        paranoid: false,
-      })
+    usersCollections
+      .findOne({ email: req.query.email })
       .then((user) => {
         if (user) {
           return res.status(200).json({ success: true, data: user });
@@ -122,7 +114,6 @@ module.exports = {
   },
 
   async getUser(req, res, next) {
-    console.log(req.user)
     if (req.user) {
       return res.status(200).json({ success: true, data: req.user });
     } else res.status(500).json({ success: false });
@@ -130,8 +121,9 @@ module.exports = {
 
 
   async getAllUserList(req, res, next) {
-    db.user
-      .findAll()
+    usersCollections
+      .find()
+      .toArray()
       .then((user) => {
         if (user) {
           return res.status(200).json({ success: true, data: user });
@@ -222,12 +214,12 @@ module.exports = {
   },
 
   async deleteUserList(req, res, next) {
-    db.user
-      .findOne({ where: { id: req.body.id } })
+    usersCollections
+      .findOne({ _id: ObjectId(req.body._id) })
       .then((data) => {
         if (data) {
-          return db.user
-            .destroy({ where: { id: req.body.id } })
+          return usersCollections
+            .deleteOne({ _id: ObjectId(req.body.id) })
             .then((r) => [r, data]);
         }
         throw new RequestError("User is not found", 409);

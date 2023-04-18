@@ -1,10 +1,7 @@
-// import { db } from '../../../models';
-const { db } = require("../../../models")
-const Sequelize = require("sequelize");
 const { ObjectId } = require("mongodb");
 const config = require("../../../config").data;
 const { upload_offer_files } = require('../../../photosave');
-const Op = Sequelize.Op;
+
 
 const dbs = config.db.dbs;
 

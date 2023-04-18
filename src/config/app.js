@@ -41,16 +41,5 @@ module.exports = {
      */
     secure: (process.env.APP_SECURE == 'true') || false,
 
-    /**
-    * aws secret key 
-    */
-
-    AWS_ACCESS_KEY: 'AKIAJPLB4D32RF',
-
-    AWS_SECRET_KEY: 'Mgo5LVpWKjnEape3j764IZ5H1IyBHDOBbhMuI',
-
-    AWS_BUCKET: 'myproductbucet',
-
-    AWS_REGION: 'us-east-1'
 
 }

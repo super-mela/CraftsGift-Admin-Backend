@@ -6,7 +6,7 @@
 
 const express = require("express");
 const categoryController = require("./category.controller");
-const { customerStrategy, jwtStrategy } = require("../../../middleware/strategy");
+const { jwtStrategy } = require("../../../middleware/strategy");
 const { sanitize } = require("../../../middleware/sanitizer");
 const { validateBody, schemas } = require("../../../middleware/validator")
 

@@ -1,6 +1,3 @@
-// import { db } from "../../../models";
-const { db } = require("../../../models")
-const { Op } = require("sequelize");
 const { ObjectId } = require("mongodb");
 const config = require("../../../config").data;
 const { upload_category_files } = require("../../../photosave");

@@ -5,7 +5,6 @@ const JwtStrategy = require("passport-jwt").Strategy;
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt-nodejs");
 const config = require("./config").data;
-const { db } = require("./models");
 const { ObjectId } = require("mongodb");
 
 const dbs = config.db.dbs;
@@ -120,7 +119,7 @@ passport.use(
     },
     async (req, email, password, done) => {
       try {
-        const user = await db.customer.findOne({ where: { email: email } });
+        const user = await usersCollections.findOne({ email: email });
         if (!user) {
           return done(null, false);
         }
@@ -141,7 +140,13 @@ passport.use(
           });
           return done("attempt:" + (5 - user.attempt), false);
         } else {
-          user.update({ attempt: 0 });
+          usersCollections.updateOne(
+            { email: email },
+            {
+              $set:
+                { attempt: 0 }
+            },
+            { upsert: true });
         }
         done(null, user);
       } catch (error) {
