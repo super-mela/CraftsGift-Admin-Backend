@@ -22,7 +22,7 @@ var jwtStrategy = (req, res, next) => {
     if (err && err == "expired") {
       return json
         ? res.status(500).json({ errors: ["Session is expired"] })
-        : res.redirect("/auth/login");
+        : res.redirect("/api/auth/rootLogin");
     }
     if (err && err == "invalid") {
       return json
