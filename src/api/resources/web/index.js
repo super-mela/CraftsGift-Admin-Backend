@@ -364,10 +364,32 @@ async function run() {
                     const query = { _id: ObjectId(id) };
 
                     const item = await productsCollection.findOne(query);
-                    cart.push(item);
+                    if (item) {
+                        cart.push(item);
+                    }
                 }
 
                 res.json(cart);
+            } catch (err) {
+                console.log(err);
+                res.status(400).json("Server Error");
+            }
+        });
+
+        web.post("/crystal-cart", async (req, res) => {
+            try {
+                const crystalItems = req.body;
+                const crystal = [];
+                for (const id in crystalItems) {
+                    const query = { _id: ObjectId(id) };
+
+                    const item = await productsCollection.findOne(query);
+                    if (item) {
+                        crystal.push(item);
+                    }
+                }
+
+                res.json(crystal);
             } catch (err) {
                 console.log(err);
                 res.status(400).json("Server Error");
@@ -534,6 +556,42 @@ async function run() {
                 }
             }
         );
+        web.post("/excute-payment-intent-paypal",
+            verifyJwtToken,
+            verifyEmail, async (req, res) => {
+                const payerId = req.query.PayerID;
+                const paymentId = req.query.paymentId;
+
+                const execute_payment_json = {
+                    payer_id: payerId,
+                    transactions: [
+                        {
+                            amount: {
+                                currency: "USD",
+                                total: "10.00",
+                            },
+                        },
+                    ],
+                };
+
+                paypal.payment.execute(paymentId, execute_payment_json, function (
+                    error,
+                    payment
+                ) {
+                    if (error) {
+                        console.log(error.response);
+                        throw error;
+                    } else {
+                        console.log(JSON.stringify(payment));
+                        res.redirect("/success");
+                    }
+                });
+            })
+
+        web.get("/cancle-payment-intent-paypal", verifyJwtToken, verifyEmail, (req, res) => {
+            res.redirect("/cancel");
+        })
+
         /* ================ Place Payment Details/order ================== */
         web.post("/invoices", verifyJwtToken, verifyEmail, async (req, res) => {
             try {

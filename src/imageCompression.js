@@ -12,23 +12,58 @@ const options = {
 
 var image_Compression = function (file, path, res) {
     if (file.name.split(".")[1] === "webp") {
-        sharp(tempFilePath + file.name)
-            .webp({ quality: compression })
-            .toFile(path + file.name, (err, info) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    fs.unlink(tempFilePath + file.name, function (error) {
-                        if (error) throw error
-                    })
-                    console.log("Image compressed successfully!");
-                    res(null, {
-                        success: true,
-                        msg: "Successfully inserted image",
-                        url: file.name,
-                    });
+        fs.access(path,
+            (error) => {
+                if (error) {
+                    fs.mkdir(path,
+                        { recursive: true },
+                        function (err) {
+                            if (err) {
+                            } else {
+                                sharp(tempFilePath + file.name)
+                                    .webp({ quality: compression })
+                                    .toFile(path + file.name, (err, info) => {
+                                        if (err) {
+                                            console.log(err);
+                                        } else {
+                                            fs.unlink(tempFilePath + file.name, function (error) {
+                                                if (error) throw error
+                                            })
+                                            console.log("Image compressed successfully!");
+                                            res(null, {
+                                                success: true,
+                                                msg: "Successfully inserted image",
+                                                url: file.name,
+                                            });
+                                        }
+                                    });
+                            }
+                        }
+                    );
+                } else if (
+                    fs.existsSync(path)) {
+                    sharp(tempFilePath + file.name)
+                        .webp({ quality: compression })
+                        .toFile(path + file.name, (err, info) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                fs.unlink(tempFilePath + file.name, function (error) {
+                                    if (error) throw error
+                                })
+                                console.log("Image compressed successfully!");
+                                res(null, {
+                                    success: true,
+                                    msg: "Successfully inserted image",
+                                    url: file.name,
+                                });
+                            }
+                        });
                 }
-            });
+
+            }
+        );
+
     }
     else {
         compress_images(tempFilePath + file.name, path, options, false,

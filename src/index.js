@@ -18,10 +18,12 @@ app.use(
   cors({
     origin: true,
     credentials: true,
-    optionSuccessStatus: 200,
-    methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH']
+    // optionSuccessStatus: 200,
+    // methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH']
   })
 );
+
+app.options("*", cors());
 
 app.use(fileupload());
 
@@ -49,6 +51,7 @@ app.use((error, req, res, next) => {
 });
 
 /* Start Listening service */
+// app.listen();
 app.listen(PORT, () => {
 
   config.db.client.connect((err) => {

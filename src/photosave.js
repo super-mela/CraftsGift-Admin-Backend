@@ -666,6 +666,7 @@ var remove_slider = function (req, res) {
 var upload_catadverts_files = function (req, res) {
   const catadverts = JSON.parse(req.body.catadverts)
   if (req.files) {
+    console.log(req.files)
     if (catadverts.length) {
       for (var row of catadverts) {
         if (req.files[row.categoryfilename]) {
