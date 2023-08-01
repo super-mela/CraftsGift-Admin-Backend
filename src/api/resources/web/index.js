@@ -609,30 +609,42 @@ async function run() {
         });
         web.post("/customOrder", verifyJwtToken, verifyEmail, async (req, res) => {
             try {
+                console.log(req.body)
+                console.log(req.files)
                 const {
-                    orderId,
-                    address,
-                    city,
-                    country,
-                    email,
-                    firstname,
-                    lastname,
-                    phone,
-                    zip,
-                    description
+                    firstname, lastname, email, phone, address, city, country, zip,
+                    paymentMethod, shippingOption, size, rush, LED, line, text, font,
+                    keychane, cleaningKit, background, invoiceId, shippingCost, crystal,
+                    status, invoice, transactionId
                 } = req.body;
                 customOrederCollection.insertOne({
-                    orderId: orderId,
+                    invoiceId: invoiceId,
                     address: address,
                     city: city,
-                    status: "Pending",
+                    status: status,
                     country: country,
                     email: email,
                     firstname: firstname,
                     lastname: lastname,
                     phone: phone,
                     zip: zip,
-                    description: description,
+                    paymentMethod: paymentMethod,
+                    shippingOption: shippingOption,
+                    shippingCost: shippingCost,
+                    invoice: invoice,
+                    transactionId: transactionId,
+                    crystal: JSON.parse(crystal),
+                    custom: {
+                        size: size,
+                        rush: rush,
+                        LED: LED,
+                        line: line,
+                        text: text,
+                        font: font,
+                        keychane: keychane,
+                        cleaningKit: cleaningKit,
+                        background: background
+                    },
                     date: new Date(),
                     image: req.files
                         ?
@@ -646,7 +658,7 @@ async function run() {
                                     res.send(err);
                                 } else {
                                     //send email to the owner
-                                    mailer.sendCustomOrderFromCustomer({ email: email, description: description, orderId: orderId })
+                                    // mailer.sendCustomOrderFromCustomer({ email: email, description: description, orderId: orderId })
                                     res.status(200).json(customOrder);
                                 }
                             });

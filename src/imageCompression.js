@@ -94,6 +94,65 @@ var image_Compression = function (file, path, res) {
     }
 }
 
+var uploadImageWithoutCompression = function (file, path, res) {
+
+    fs.access(
+        path,
+        (error) => {
+            if (error) {
+                fs.mkdir(
+                    path, { recursive: true }, function (err) {
+                        if (err) {
+                        } else {
+                            if (file === null) {
+                                return res.status(400).json({ msg: "no file Uploaded" });
+                            }
+                            file.mv(
+                                `${path}/${file.name}`,
+                                (err) => {
+                                    if (err) {
+                                        console.error(err);
+                                        //   return res.status(500).send(err);
+                                    }
+                                    fs.unlink(tempFilePath + file.name, function (error) {
+                                        if (error) throw error
+                                    })
+                                    res(null, {
+                                        success: true,
+                                        msg: "Successfully inserted product",
+                                    });
+                                }
+                            );
+                            console.log(" directory successfully created.", baseurl);
+                        }
+                    }
+                );
+            } else {
+                if (fs.existsSync(path)) {
+                    //const file = req.files.file;
+                    file.mv(
+                        `${path}/${file.name}`,
+                        (err) => {
+                            if (err) {
+                                console.error(err);
+                                //   return res.status(500).send(err);
+                            }
+                            fs.unlink(tempFilePath + file.name, function (error) {
+                                if (error) throw error
+                            })
+                            res(null, {
+                                success: true,
+                                msg: "Successfully inserted product",
+                            });
+                        }
+                    );
+                }
+            }
+        }
+    );
+};
+
 module.exports = {
-    image_Compression
+    image_Compression,
+    uploadImageWithoutCompression
 }

@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { image_Compression } = require("./imageCompression");
+const { image_Compression, uploadImageWithoutCompression } = require("./imageCompression");
 
 var baseurl = __dirname + '/photo/product/';
 var baseurlcategory = __dirname + '/photo/category';
@@ -36,7 +36,13 @@ var upload_files = function (req, res) {
                   }
                   image_Compression(file, outFilePath, function (err, result) {
                     if (err) {
-                      res.send(err);
+                      uploadImageWithoutCompression(file, outFilePath, function (err, result) {
+                        if (err) {
+                          res.send(err);
+                        } else {
+                          res(null, result);
+                        }
+                      });
                     } else {
                       res(null, result);
                     }
@@ -58,7 +64,13 @@ var upload_files = function (req, res) {
                 }
                 image_Compression(file, outFilePath, function (err, result) {
                   if (err) {
-                    res.send(err);
+                    uploadImageWithoutCompression(file, outFilePath, function (err, result) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res(null, result);
+                      }
+                    });
                   } else {
                     res(null, result);
                   }
@@ -97,7 +109,13 @@ var upload_category_files = function (req, res) {
                     }
                     image_Compression(file, outFilePath, function (err, result) {
                       if (err) {
-                        res.send(err);
+                        uploadImageWithoutCompression(file, outFilePath, function (err, result) {
+                          if (err) {
+                            res.send(err);
+                          } else {
+                            res(null, result);
+                          }
+                        });
                       } else {
                         res(null, result);
                       }
@@ -120,7 +138,13 @@ var upload_category_files = function (req, res) {
                 }
                 image_Compression(file, outFilePath, function (err, result) {
                   if (err) {
-                    res.send(err);
+                    uploadImageWithoutCompression(file, outFilePath, function (err, result) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res(null, result);
+                      }
+                    });
                   } else {
                     res(null, result);
                   }
@@ -155,7 +179,13 @@ var upload_offer_files = function (req, res) {
                     }
                     image_Compression(file, baseurloffer, function (err, result) {
                       if (err) {
-                        res.send(err);
+                        uploadImageWithoutCompression(file, baseurloffer, function (err, result) {
+                          if (err) {
+                            res.send(err);
+                          } else {
+                            res(null, result);
+                          }
+                        });
                       } else {
                         res(null, result);
                       }
@@ -175,7 +205,13 @@ var upload_offer_files = function (req, res) {
                 }
                 image_Compression(file, baseurloffer, function (err, result) {
                   if (err) {
-                    res.send(err);
+                    uploadImageWithoutCompression(file, baseurloffer, function (err, result) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res(null, result);
+                      }
+                    });
                   } else {
                     res(null, result);
                   }
@@ -211,7 +247,14 @@ var upload_customOrder_files = function (req, res) {
                     }
                     image_Compression(file, baseurlcustomOrder, function (err, result) {
                       if (err) {
-                        res.send(err);
+                        // res.send(err);
+                        uploadImageWithoutCompression(file, baseurlcustomOrder, function (err, result) {
+                          if (err) {
+                            res.send(err);
+                          } else {
+                            res(null, result);
+                          }
+                        });
                       } else {
                         res(null, result);
                       }
@@ -232,7 +275,14 @@ var upload_customOrder_files = function (req, res) {
                 }
                 image_Compression(file, baseurlcustomOrder, function (err, result) {
                   if (err) {
-                    res.send(err);
+                    // res.send(err);
+                    uploadImageWithoutCompression(file, baseurlcustomOrder, function (err, result) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res(null, result);
+                      }
+                    });
                   } else {
                     res(null, result);
                   }
@@ -267,7 +317,14 @@ var upload_profile = function (req, res) {
                     }
                     image_Compression(file, baseurlprofile, function (err, result) {
                       if (err) {
-                        res.send(err);
+                        // res.send(err);
+                        uploadImageWithoutCompression(file, baseurlprofile, function (err, result) {
+                          if (err) {
+                            res.send(err);
+                          } else {
+                            res(null, result);
+                          }
+                        });
                       } else {
                         res(null, result);
                       }
@@ -287,7 +344,14 @@ var upload_profile = function (req, res) {
                 }
                 image_Compression(file, baseurlprofile, function (err, result) {
                   if (err) {
-                    res.send(err);
+                    // res.send(err);
+                    uploadImageWithoutCompression(file, baseurlprofile, function (err, result) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res(null, result);
+                      }
+                    });
                   } else {
                     res(null, result);
                   }
@@ -322,7 +386,14 @@ var upload_Aboutus_files = function (req, res) {
                       }
                       image_Compression(file, baseurlaboutus, function (err, result) {
                         if (err) {
-                          res.send(err);
+                          // res.send(err);
+                          uploadImageWithoutCompression(file, baseurlaboutus, function (err, result) {
+                            if (err) {
+                              res.send(err);
+                            } else {
+                              res(null, result);
+                            }
+                          });
                         } else {
                           res(null, result);
                         }
@@ -343,7 +414,14 @@ var upload_Aboutus_files = function (req, res) {
                   }
                   image_Compression(file, baseurlaboutus, function (err, result) {
                     if (err) {
-                      res.send(err);
+                      // res.send(err);
+                      uploadImageWithoutCompression(file, baseurlaboutus, function (err, result) {
+                        if (err) {
+                          res.send(err);
+                        } else {
+                          res(null, result);
+                        }
+                      });
                     } else {
                       res(null, result);
                     }
@@ -374,7 +452,14 @@ var upload_Aboutus_files = function (req, res) {
                     }
                     image_Compression(file, baseurlaboutus, function (err, result) {
                       if (err) {
-                        res.send(err);
+                        // res.send(err);
+                        uploadImageWithoutCompression(file, baseurlaboutus, function (err, result) {
+                          if (err) {
+                            res.send(err);
+                          } else {
+                            res(null, result);
+                          }
+                        });
                       } else {
                         res(null, result);
                       }
@@ -395,7 +480,14 @@ var upload_Aboutus_files = function (req, res) {
                 }
                 image_Compression(file, baseurlaboutus, function (err, result) {
                   if (err) {
-                    res.send(err);
+                    // res.send(err);
+                    uploadImageWithoutCompression(file, baseurlaboutus, function (err, result) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res(null, result);
+                      }
+                    });
                   } else {
                     res(null, result);
                   }
@@ -427,7 +519,14 @@ var upload_Aboutus_files = function (req, res) {
                         }
                         image_Compression(file, baseurlaboutus + "founders/", function (err, result) {
                           if (err) {
-                            res.send(err);
+                            // res.send(err);
+                            uploadImageWithoutCompression(file, baseurlaboutus + "founders/", function (err, result) {
+                              if (err) {
+                                res.send(err);
+                              } else {
+                                res(null, result);
+                              }
+                            });
                           } else {
                             res(null, result);
                           }
@@ -447,7 +546,14 @@ var upload_Aboutus_files = function (req, res) {
                     }
                     image_Compression(file, baseurlaboutus + "founders/", function (err, result) {
                       if (err) {
-                        res.send(err);
+                        // res.send(err);
+                        uploadImageWithoutCompression(file, baseurlaboutus + "founders/", function (err, result) {
+                          if (err) {
+                            res.send(err);
+                          } else {
+                            res(null, result);
+                          }
+                        });
                       } else {
                         res(null, result);
                       }
@@ -498,7 +604,14 @@ var upload_banner_files = function (req, res) {
                     }
                     image_Compression(file, baseurlbanner, function (err, result) {
                       if (err) {
-                        res.send(err);
+                        // res.send(err);
+                        uploadImageWithoutCompression(file, baseurlbanner, function (err, result) {
+                          if (err) {
+                            res.send(err);
+                          } else {
+                            res(null, result);
+                          }
+                        });
                       } else {
                         res(null, result);
                       }
@@ -518,7 +631,14 @@ var upload_banner_files = function (req, res) {
                 }
                 image_Compression(file, baseurlbanner, function (err, result) {
                   if (err) {
-                    res.send(err);
+                    // res.send(err);
+                    uploadImageWithoutCompression(file, baseurlbanner, function (err, result) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res(null, result);
+                      }
+                    });
                   } else {
                     res(null, result);
                   }
@@ -553,7 +673,14 @@ var upload_advertbanner_files = function (req, res) {
                     }
                     image_Compression(file, baseurladvertbanner, function (err, result) {
                       if (err) {
-                        res.send(err);
+                        // res.send(err);
+                        uploadImageWithoutCompression(file, baseurladvertbanner, function (err, result) {
+                          if (err) {
+                            res.send(err);
+                          } else {
+                            res(null, result);
+                          }
+                        });
                       } else {
                         res(null, result);
                       }
@@ -573,7 +700,14 @@ var upload_advertbanner_files = function (req, res) {
                 }
                 image_Compression(file, baseurladvertbanner, function (err, result) {
                   if (err) {
-                    res.send(err);
+                    // res.send(err);
+                    uploadImageWithoutCompression(file, baseurladvertbanner, function (err, result) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res(null, result);
+                      }
+                    });
                   } else {
                     res(null, result);
                   }
@@ -608,10 +742,16 @@ var upload_sliders_files = function (req, res) {
                           if (err) {
                             console.error(err);
                           }
-                          var data = { file: file, path: baseurlslider }
                           image_Compression(file, baseurlslider, function (err, result) {
                             if (err) {
-                              res.send(err);
+                              // res.send(err);
+                              uploadImageWithoutCompression(file, baseurlslider, function (err, result) {
+                                if (err) {
+                                  res.send(err);
+                                } else {
+                                  res(null, result);
+                                }
+                              });
                             } else {
                               res(null, result);
                             }
@@ -629,10 +769,16 @@ var upload_sliders_files = function (req, res) {
                       if (err) {
                         console.error(err);
                       }
-                      var data = { file: file, path: baseurlslider }
                       image_Compression(file, baseurlslider, function (err, result) {
                         if (err) {
-                          res.send(err);
+                          // res.send(err);
+                          uploadImageWithoutCompression(file, baseurlslider, function (err, result) {
+                            if (err) {
+                              res.send(err);
+                            } else {
+                              res(null, result);
+                            }
+                          });
                         } else {
                           res(null, result);
                         }
@@ -687,7 +833,14 @@ var upload_catadverts_files = function (req, res) {
                           }
                           image_Compression(file, baseurlcatAdvert, function (err, result) {
                             if (err) {
-                              res.send(err);
+                              // res.send(err);
+                              uploadImageWithoutCompression(file, baseurlcatAdvert, function (err, result) {
+                                if (err) {
+                                  res.send(err);
+                                } else {
+                                  res(null, result);
+                                }
+                              });
                             } else {
                               res(null, result);
                             }
@@ -707,7 +860,14 @@ var upload_catadverts_files = function (req, res) {
                       }
                       image_Compression(file, baseurlcatAdvert, function (err, result) {
                         if (err) {
-                          res.send(err);
+                          // res.send(err);
+                          uploadImageWithoutCompression(file, baseurlcatAdvert, function (err, result) {
+                            if (err) {
+                              res.send(err);
+                            } else {
+                              res(null, result);
+                            }
+                          });
                         } else {
                           res(null, result);
                         }
