@@ -1,5 +1,5 @@
 const config = require("../../../config").data;
-const { upload_files } = require("../../../photosave");
+const { uploadCrystal_files } = require("../../../photosave");
 const MultiPhotos = require("../../../multiphoto");
 const { ObjectId } = require("mongodb");
 
@@ -14,11 +14,9 @@ module.exports = {
     try {
       const {
         name,
-        category,
         discount,
         net,
         price,
-        subCategory,
         image,
         tags,
         desc,
@@ -26,16 +24,12 @@ module.exports = {
       } = req.body;
       crystalsCollection
         .findOne({
-          category: category,
-          subCategory: subCategory,
           name: name,
         })
         .then((crystal) => {
           if (!crystal) {
             return crystalsCollection.insertOne({
               name: name,
-              category: category,
-              subCategory: subCategory,
               status: "in stock",
               net: net,
               ratings: 0,
@@ -47,10 +41,6 @@ module.exports = {
               date: new Date(),
               image: req.files
                 ?
-                category +
-                "/" +
-                subCategory +
-                "/" +
                 req.files.image.name
                 : "no image",
 
@@ -60,7 +50,7 @@ module.exports = {
         })
         .then((crystal) => {
           if (req.files) {
-            upload_files(req, function (err, result) {
+            uploadCrystal_files(req, function (err, result) {
               if (err) {
                 res.send(err);
               } else {
@@ -104,8 +94,6 @@ module.exports = {
     try {
       const {
         crystalId,
-        category,
-        subCategory,
         name,
         discount,
         net,
@@ -123,8 +111,8 @@ module.exports = {
               { _id: ObjectId(crystal._id) },
               {
                 $set: {
-                  category: category, subCategory: subCategory, name: name, discount: discount, net: net, price: price, tags: JSON.parse(tags), desc: desc,
-                  image: req.files ? category + "/" + subCategory + "/" + req.files.image.name : crystal.image,
+                  name: name, discount: discount, net: net, price: price, tags: JSON.parse(tags), desc: desc,
+                  image: req.files ? req.files.image.name : crystal.image,
                   status: status
                 }
               },
@@ -135,7 +123,7 @@ module.exports = {
         })
         .then((p) => {
           if (req.files) {
-            upload_files(req, function (err, result) {
+            uploadCrystal_files(req, function (err, result) {
               if (err) {
                 res.send(err);
               } else {

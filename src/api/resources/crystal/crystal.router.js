@@ -5,9 +5,9 @@ const { jwtStrategy, jwtCustomerStrategy } = require("../../../middleware/strate
 
 const crystalRouter = express.Router();
 crystalRouter.route("/add").post(sanitize(), jwtStrategy, crystalController.addcrystal);
-crystalRouter.route("/getAllproductList").get(sanitize(), crystalController.getAllcrystalList);
+crystalRouter.route("/getAllCrystalList").get(sanitize(), crystalController.getAllcrystalList);
 crystalRouter.route("/update").post(sanitize(), crystalController.update);
-crystalRouter.route("/getProductById").get(sanitize(), crystalController.getcrystalListById);
+crystalRouter.route("/getCrystalById").get(sanitize(), crystalController.getcrystalListById);
 crystalRouter.route("/delete").delete(sanitize(), crystalController.crystalDelete);
 crystalRouter.route("/upload-img").post(sanitize(), crystalController.multiplePhotoUpload);
 

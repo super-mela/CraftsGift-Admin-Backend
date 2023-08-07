@@ -10,6 +10,7 @@ const { paymentRouter } = require("./resources/payment");
 const { feedbackRouter } = require("./resources/feedback");
 const { web } = require('./resources/web');
 const { settingRouter } = require("./resources/setting")
+const { crystalRouter } = require("./resources/crystal")
 
 const restRouter = express.Router();
 
@@ -25,6 +26,7 @@ restRouter.use('/payment', paymentRouter);
 restRouter.use('/feedback', feedbackRouter);
 restRouter.use('/web', web);
 restRouter.use('/setting', settingRouter);
+restRouter.use('/crystal', crystalRouter);
 
 module.exports = {
     restRouter

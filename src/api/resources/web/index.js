@@ -36,6 +36,7 @@ async function run() {
         const catAdvertCollection = db.collection("categoryAdvert");
         const shippingCollection = db.collection("shippingtype");
         const slidersCollection = db.collection("sliders");
+        const crystalCollection = db.collection("crystals");
 
         /* ************** APIs ********************* */
 
@@ -241,6 +242,30 @@ async function run() {
 
             res.json(result);
         });
+        web.get("/crystal", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+
+            const result = await crystalCollection.find().toArray();
+
+            res.json(result);
+        });
+
+        // async getAllcrystalList(req, res, next) {
+        //     try {
+        //       crystalsCollection.find()
+        //         .sort({ date: -1 })
+        //         .toArray()
+        //         .then((crystal) => {
+        //           res.status(200).json({ success: true, crystal });
+        //         })
+        //         .catch(function (err) {
+        //           next(err);
+        //         });
+        //     } catch (err) {
+        //       throw new RequestError("Error");
+        //     }
+        //   },
 
         /* ================Get A product review================== */
         web.get("/reviews/:productId", async (req, res) => {
@@ -383,7 +408,7 @@ async function run() {
                 for (const id in crystalItems) {
                     const query = { _id: ObjectId(id) };
 
-                    const item = await productsCollection.findOne(query);
+                    const item = await crystalCollection.findOne(query);
                     if (item) {
                         crystal.push(item);
                     }

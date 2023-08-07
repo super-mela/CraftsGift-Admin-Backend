@@ -2,6 +2,7 @@ const fs = require("fs");
 const { image_Compression, uploadImageWithoutCompression } = require("./imageCompression");
 
 var baseurl = __dirname + '/photo/product/';
+var baseurlCrystal = __dirname + '/photo/crystal/';
 var baseurlcategory = __dirname + '/photo/category';
 var baseurloffer = __dirname + '/photo/offer/';
 var baseurlcustomOrder = __dirname + '/photo/customOrder/';
@@ -65,6 +66,75 @@ var upload_files = function (req, res) {
                 image_Compression(file, outFilePath, function (err, result) {
                   if (err) {
                     uploadImageWithoutCompression(file, outFilePath, function (err, result) {
+                      if (err) {
+                        res.send(err);
+                      } else {
+                        res(null, result);
+                      }
+                    });
+                  } else {
+                    res(null, result);
+                  }
+                });
+              }
+            );
+          }
+        }
+      }
+    );
+  }
+};
+
+var uploadCrystal_files = function (req, res) {
+  if (req.files) {
+    const file = req.files.image;
+    fs.access(tempFilePath,
+      (error) => {
+        if (error) {
+          fs.mkdir(tempFilePath,
+            { recursive: true },
+            function (err) {
+              if (err) {
+              } else {
+                if (req.files === null) {
+                  return res.status(400).json({ msg: "no file Uploaded" });
+                }
+                file.mv(`${tempFilePath}${file.name}`, (err) => {
+                  if (err) {
+                    console.error(err);
+                    return res.status(500).send(err);
+                  }
+                  image_Compression(file, baseurlCrystal, function (err, result) {
+                    if (err) {
+                      uploadImageWithoutCompression(file, baseurlCrystal, function (err, result) {
+                        if (err) {
+                          res.send(err);
+                        } else {
+                          res(null, result);
+                        }
+                      });
+                    } else {
+                      res(null, result);
+                    }
+                  });
+                }
+                );
+                console.log(" directory successfully created.", baseurlCrystal);
+              }
+            }
+          );
+        } else {
+          if (
+            fs.existsSync(tempFilePath)) {
+            file.mv(`${tempFilePath}${file.name}`,
+              (err) => {
+                if (err) {
+                  console.error(err);
+                  return res.status(500).send(err);
+                }
+                image_Compression(file, baseurlCrystal, function (err, result) {
+                  if (err) {
+                    uploadImageWithoutCompression(file, baseurlCrystal, function (err, result) {
                       if (err) {
                         res.send(err);
                       } else {
@@ -912,4 +982,5 @@ module.exports = {
   upload_catadverts_files,
   remove_catadverts,
   upload_advertbanner_files,
+  uploadCrystal_files,
 };

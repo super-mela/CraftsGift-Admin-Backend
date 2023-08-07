@@ -25,7 +25,7 @@ module.exports = {
         app.use(cookieParser(config.app.secret));
         app.use(session({ secret: config.app.secret, resave: true, saveUninitialized: true }));
         app.use("/product", express.static(path.join(__dirname, 'photo/product/')));
-        app.use("/product", express.static(path.join(__dirname, 'photo/product/')));
+        app.use("/crystal", express.static(path.join(__dirname, 'photo/crystal/')));
         app.use("/category", express.static(path.join(__dirname, 'photo/category/')));
         app.use("/offer", express.static(path.join(__dirname, 'photo/offer/')));
         app.use("/customorder", express.static(path.join(__dirname, 'photo/customOrder/')));
