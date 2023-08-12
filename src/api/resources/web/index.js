@@ -242,11 +242,20 @@ async function run() {
 
             res.json(result);
         });
+        /*=================Get A crystal==================*/
         web.get("/crystal", async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
 
             const result = await crystalCollection.find().toArray();
+
+            res.json(result);
+        });
+        web.get("/crystal/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+
+            const result = await crystalCollection.findOne(query);
 
             res.json(result);
         });

@@ -218,7 +218,7 @@ module.exports = {
         }
     },
     async getAllCustomOrderCount(req, res, next) {
-        const Status = ['Pending', "shipping", "delieverd", "cancel"]
+        const Status = ['pending', "shipping", "delieverd", "cancel"]
         try {
             customOrederCollection.find()
                 .toArray()
@@ -226,7 +226,6 @@ module.exports = {
                     if (orders) {
                         const list = []
                         Status.map((row) => {
-                            console.log(row)
                             let eachStatus = orders.filter(data => data.status === row)
                             let resObj = { status: row, total: eachStatus.length }
                             list.push(resObj)
