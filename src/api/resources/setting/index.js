@@ -6,6 +6,7 @@ const { shippingRouter } = require("./shipping")
 const { sliderRouter } = require("./slider")
 const { catAdvertRouter } = require("./category")
 const { advertbannerRouter } = require("./advertbanner")
+const { crystalOptionRoute } = require("./crystalOption")
 
 const settingRouter = express.Router();
 
@@ -15,6 +16,7 @@ settingRouter.use('/shipping', shippingRouter)
 settingRouter.use('/slider', sliderRouter)
 settingRouter.use('/category', catAdvertRouter)
 settingRouter.use('/advertbanner', advertbannerRouter)
+settingRouter.use('/crystalOption', crystalOptionRoute)
 
 
 module.exports = {
