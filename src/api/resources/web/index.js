@@ -37,7 +37,7 @@ async function run() {
         const shippingCollection = db.collection("shippingtype");
         const slidersCollection = db.collection("sliders");
         const crystalCollection = db.collection("crystals");
-
+        const crystsalOptionCollection = db.collection("crystalOption");
         /* ************** APIs ********************* */
 
         /*====================Utils========================= */
@@ -992,6 +992,20 @@ async function run() {
                 slidersCollection.findOne()
                     .then((slider) => {
                         res.status(200).json(slider);
+                    })
+                    .catch(function (err) {
+                        next(err);
+                    });
+            } catch (error) {
+                console.log(error);
+                res.status(400).json("Server Error");
+            }
+        });
+        web.get("/setting/crystalOption", async (req, res) => {
+            try {
+                crystsalOptionCollection.findOne()
+                    .then((crystalOption) => {
+                        res.status(200).json(crystalOption);
                     })
                     .catch(function (err) {
                         next(err);

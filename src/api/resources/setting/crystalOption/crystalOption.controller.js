@@ -7,9 +7,7 @@ const crystsalOptionCollection = dbs.collection("crystalOption");
 module.exports = {
     /* Add user api start here................................*/
     async addCrystalOption(req, res, next) {
-        console.log(req.body)
         try {
-            const { options } = req.body;
             crystsalOptionCollection
                 .findOne()
                 .then((crystal) => {
@@ -22,7 +20,7 @@ module.exports = {
                     else {
                         return crystsalOptionCollection.updateOne(
                             { _id: ObjectId(crystal._id) },
-                            { $set: { options } },
+                            { $set: { ...req.body } },
                             { upsert: true }
                         )
                     }
