@@ -649,7 +649,7 @@ async function run() {
                     firstname, lastname, email, phone, address, city, country, zip,
                     paymentMethod, shippingOption, size, rush, LED, line, text, font,
                     keychane, cleaningKit, background, invoiceId, shippingCost, crystal,
-                    status, invoice, transactionId
+                    status, invoice, transactionId, optionCaption
                 } = req.body;
                 customOrederCollection.insertOne({
                     invoiceId: invoiceId,
@@ -668,6 +668,7 @@ async function run() {
                     invoice: invoice,
                     transactionId: transactionId,
                     crystal: JSON.parse(crystal),
+                    optionCaption: JSON.parse(optionCaption),
                     custom: {
                         size: size,
                         rush: rush,
