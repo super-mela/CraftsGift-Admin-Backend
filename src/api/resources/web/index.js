@@ -725,7 +725,7 @@ async function run() {
 
         web.get("/customOrders/:uid", verifyJwtToken, verifyEmail, async (req, res) => {
             try {
-                const query = { orderId: req.params.uid };
+                const query = { invoiceId: req.params.uid };
 
                 const result = await customOrederCollection.findOne(query);
 
@@ -802,11 +802,35 @@ async function run() {
                 res.status(400).json("Server Error");
             }
         });
+        web.get("/crystalinvoices/:uid", verifyJwtToken, verifyEmail, async (req, res) => {
+            try {
+                const query = { invoiceId: req.params.uid };
+
+                const result = await customOrederCollection.findOne(query);
+
+                res.json(result);
+            } catch (error) {
+                res.status(400).json("Server Error");
+            }
+        });
 
         /* ================Get All the invoices of a user================== */
         web.get("/invoices", verifyJwtToken, verifyEmail, async (req, res) => {
             try {
                 const result = await invoicesCollection
+                    .find({ email: req.query.email })
+                    .skip(parseInt(req.query.page) * parseInt(req.query.size))
+                    .limit(parseInt(req.query.size))
+                    .toArray();
+
+                res.json(result);
+            } catch (err) {
+                res.status(400).json("Server Error");
+            }
+        });
+        web.get("/crystalinvoices", verifyJwtToken, verifyEmail, async (req, res) => {
+            try {
+                const result = await customOrederCollection
                     .find({ email: req.query.email })
                     .skip(parseInt(req.query.page) * parseInt(req.query.size))
                     .limit(parseInt(req.query.size))

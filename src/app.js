@@ -36,6 +36,8 @@ module.exports = {
         app.use("/slider", express.static(path.join(__dirname, 'photo/slider/')));
         app.use("/catadvert", express.static(path.join(__dirname, 'photo/categoryAdvert/')));
         app.use("/multiImages", express.static(path.join(__dirname, 'photo/product/MultiImages')));
+        app.use(express.static(path.join(__dirname, '../../gmarket.habeshagebeya.com')));
+
         app.use(passport.initialize());
         app.use(passport.session());
         app.use(expressSanitizer());

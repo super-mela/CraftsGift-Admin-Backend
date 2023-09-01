@@ -26,7 +26,9 @@ app.use(
 app.options("*", cors());
 
 app.use(fileupload());
-
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, '../../gmarket.habeshagebeya.com/index.html'));
+});
 /* Route handling */
 app.use("/api", restRouter);
 // app.use('/', webRouter);
